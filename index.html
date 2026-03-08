@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alfaza Cell - v12.2</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        :root { --p: #2c3e50; --s: #27ae60; --a: #3498db; --d: #e74c3c; --v: #8e44ad; --gray: #f8f9fa; --gold: #f39c12; }
+        body { font-family: 'Segoe UI', sans-serif; background: #eaeff2; margin: 0; padding: 10px; color: #333; }
+        .container { max-width: 450px; margin: auto; background: #fff; border-radius: 25px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.1); padding: 15px; min-height: 95vh; position: relative; }
+        
+        /* Header & Info */
+        .top-header { display: flex; justify-content: space-between; margin-bottom: 15px; }
+        .info-left { background: #f0f2f5; padding: 8px; border-radius: 12px; font-size: 10px; line-height: 1.4; min-width: 110px; }
+        .info-right { text-align: right; }
+        .info-right h2 { margin: 0; font-size: 14px; font-weight: 900; }
+        .info-right p { margin: 1px 0; font-size: 9px; color: #555; }
+        
+        /* Saldo Grid */
+        .grid-saldo { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .card { padding: 10px 5px; border-radius: 12px; color: white; text-align: center; }
+        .card h4 { margin: 0; font-size: 8px; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px; }
+        .card p { margin: 3px 0 0; font-size: 16px; font-weight: bold; }
+        .bg-bank { background: #3498db; } .bg-cash { background: #2ecc71; }
+        .bg-tarik { background: #9b59b6; } .bg-laba { background: #f39c12; }
+
+        .quote-box { margin: 10px 0; text-align: center; min-height: 30px; display: flex; align-items: center; justify-content: center; }
+        #kata-mutiara { font-size: 10px; font-weight: bold; color: #ff0055; width: 100%; line-height: 1.2; font-style: italic; }
+
+        /* Category Buttons */
+        .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+        .btn-cat { background: #f0f2f5; border: 1px solid #ddd; padding: 10px; border-radius: 12px; font-size: 11px; font-weight: bold; cursor: pointer; color: #555; text-align: center; }
+        .btn-cat.active { background: #3498db; color: white; border-color: #3498db; }
+
+        /* Form */
+        .form-box { background: var(--gray); padding: 12px; border-radius: 15px; border: 1px solid #eee; }
+        input, select { width: 100%; padding: 10px; margin-bottom: 8px; border: 1px solid #ddd; border-radius: 10px; font-size: 12px; box-sizing: border-box; outline: none; }
+        .check-row { display: flex; align-items: center; gap: 8px; font-size: 11px; color: #666; background: #fff; padding: 8px; border-radius: 10px; border: 1px dashed #ccc; margin-bottom: 8px; }
+        .check-row input { width: auto; margin: 0; }
+
+        /* Buttons */
+        .btn { border: none; border-radius: 12px; color: white; font-weight: bold; cursor: pointer; font-size: 13px; width: 100%; padding: 12px; transition: 0.2s; }
+        .btn-save { background: #f39c12; margin-top: 5px; box-shadow: 0 4px 0 #d35400; }
+        .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .btn-saldo { background: #2ecc71; } .btn-riwayat { background: #34495e; }
+        .btn-logout { background: #e74c3c; } .btn-pdf { background: #34495e; }
+
+        /* Riwayat Styling */
+        #history-page { display: none; padding-top: 10px; }
+        .hist-section { margin-bottom: 20px; }
+        .hist-title { display: flex; align-items: center; font-size: 13px; font-weight: 800; margin-bottom: 8px; color: #2c3e50; }
+        .hist-title span { color: #3498db; margin-right: 6px; font-size: 16px; }
+        
+        .filter-container { background: #fff; padding: 10px; border-radius: 15px; margin-bottom: 10px; border: 1px solid #eee; }
+        .filter-capsules { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; }
+        .capsule { padding: 5px 12px; background: #e0e0e0; border-radius: 15px; font-size: 10px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+        .capsule.active { background: #3498db; color: white; }
+        
+        .hist-table { width: 100%; border-collapse: collapse; background: var(--gray); border-radius: 12px; overflow: hidden; font-size: 10px; }
+        .hist-table th { background: #fff; padding: 8px; text-align: left; border-bottom: 2px solid #eee; color: #777; }
+        .hist-table td { padding: 10px 8px; border-bottom: 1px solid #eee; }
+        .tfoot-total { background: #f0f2f5; font-weight: 900; color: #2c3e50; }
+
+        .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:1000; align-items: center; justify-content: center; }
+        .modal-content { background: white; padding: 20px; border-radius: 20px; width: 85%; }
+
+        #main-app, #login-screen { display: none; }
+        #login-screen { display: block; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="login-screen">
+        <h2 style="text-align:center; margin-top:50px; font-size: 22px; color:var(--p)">ALFAZA CELL</h2>
+        <p style="text-align:center; font-size: 12px; color: #777; margin-bottom: 30px;">Silahkan Login untuk Bertransaksi</p>
+        <select id="kasir-select">
+            <option value="">Pilih Kasir</option>
+            <option value="Kasir 001">Kasir 001</option>
+            <option value="Kasir 002">Kasir 002</option>
+        </select>
+        <input type="password" id="pin-input" placeholder="Masukkan PIN">
+        <button class="btn btn-save" style="background:#3498db; box-shadow:0 4px 0 #2980b9;" onclick="masuk()">LOG IN & ABSEN</button>
+    </div>
+
+    <div id="main-app">
+        <div class="top-header">
+            <div class="info-left">
+                Kasir : <b id="disp-kasir">-</b><br>
+                Shif : <span id="disp-shift">-</span><br>
+                Absen : <span id="disp-login">-</span>
+            </div>
+            <div class="info-right">
+                <h2>ALFAZA CELL</h2>
+                <p id="disp-hari">-</p>
+                <p id="disp-jam" style="font-weight:900; color:var(--a); font-size: 11px;">00:00:00</p>
+            </div>
+        </div>
+
+        <div class="grid-saldo">
+            <div class="card bg-bank"><h4>SALDO BANK</h4><p id="s-bank">0</p></div>
+            <div class="card bg-cash"><h4>SALDO CASH</h4><p id="s-cash">0</p></div>
+            <div class="card bg-tarik"><h4>TARIK TUNAI</h4><p id="s-tarik">0</p></div>
+            <div class="card bg-laba"><h4>LABA (ADMIN)</h4><p id="s-laba">0</p></div>
+        </div>
+
+        <div class="quote-box"><div id="kata-mutiara">...</div></div>
+
+        <div class="cat-grid">
+            <div class="btn-cat active" id="btn-tf" onclick="pilihKat('Transfer')">TF/PPOB</div>
+            <div class="btn-cat" id="btn-tt" onclick="pilihKat('Tarik Tunai')">TARIK TUNAI</div>
+            <div class="btn-cat" id="btn-ew" onclick="pilihKat('E-Wallet')">E-WALLET</div>
+            <div class="btn-cat" id="btn-ak" onclick="pilihKat('Aksesoris')">AKSESORIS</div>
+        </div>
+
+        <div class="form-box">
+            <input type="text" id="t-nom" placeholder="Nominal / Harga" onkeyup="fmt(this)">
+            <div id="box-admin">
+                <input type="text" id="t-adm" placeholder="Admin" onkeyup="fmt(this)">
+            </div>
+            <div id="box-adm-dalam" style="display:none;">
+                <div class="check-row">
+                    <input type="checkbox" id="is-adm-dalam">
+                    <label for="is-adm-dalam">Admin Dalam (Nasabah Bayar Lebih)</label>
+                </div>
+            </div>
+            <input type="text" id="t-ket" placeholder="Keterangan">
+            <button class="btn btn-save" onclick="simpanTr()">SIMPAN TRANSAKSI</button>
+        </div>
+
+        <div class="btn-row">
+            <button class="btn btn-saldo" onclick="bukaModal()">+ Saldo</button>
+            <button class="btn btn-riwayat" onclick="showHistory()">Riwayat</button>
+        </div>
+        <div class="btn-row">
+            <button class="btn btn-logout" onclick="keluar()">Logout</button>
+            <button class="btn btn-pdf" onclick="eksporPDF()">Share PDF</button>
+        </div>
+    </div>
+
+    <div id="history-page">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px">
+            <h2 style="margin:0; font-size: 16px;">Dashboard Riwayat</h2>
+            <button onclick="hideHistory()" style="border:none; color:var(--d); font-weight:bold; background:none; cursor:pointer">Kembali</button>
+        </div>
+
+        <div class="filter-container">
+            <div style="font-size: 10px; font-weight: bold; margin-bottom: 5px; color: #777;">FILTER TANGGAL:</div>
+            <input type="date" id="filter-tgl" onchange="renderSemua()">
+            <div class="filter-capsules">
+                <div class="capsule active" onclick="setFilterKat(this, 'semua')">Semua Kat</div>
+                <div class="capsule" onclick="setFilterKat(this, 'Transfer')">Transfer</div>
+                <div class="capsule" onclick="setFilterKat(this, 'E-Wallet')">E-Wallet</div>
+                <div class="capsule" onclick="setFilterKat(this, 'Tarik Tunai')">Tarik Tunai</div>
+            </div>
+        </div>
+
+        <div class="hist-section">
+            <div class="hist-title"><span>📜</span> TRANSAKSI</div>
+            <table class="hist-table">
+                <thead><tr><th>Jam</th><th>Kat</th><th>Nom</th><th>Adm</th><th>Ket</th></tr></thead>
+                <tbody id="list-tr"></tbody>
+                <tfoot id="foot-tr" class="tfoot-total"></tfoot>
+            </table>
+        </div>
+
+        <div class="hist-section">
+            <div class="hist-title"><span>💰</span> RIWAYAT TAMBAH SALDO</div>
+            <table class="hist-table">
+                <thead><tr><th>Jam</th><th>Jenis</th><th>Nominal</th><th>Ket</th></tr></thead>
+                <tbody id="list-sd"></tbody>
+                <tfoot id="foot-sd" class="tfoot-total"></tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="modalSaldo" class="modal">
+    <div class="modal-content">
+        <h3>Tambah Saldo Modal</h3>
+        <select id="m-jenis"><option value="Bank">Bank</option><option value="Cash">Cash</option></select>
+        <input type="text" id="m-nom" placeholder="Nominal" onkeyup="fmt(this)">
+        <button class="btn btn-saldo" onclick="prosesModal()">Simpan</button>
+        <button class="btn btn-logout" style="margin-top:10px" onclick="bukaModal()">Batal</button>
+    </div>
+</div>
+
+<script>
+    const KATA_LIST = ["Semoga berkah transaksi hari ini.", "Jujur itu modal, senyum itu promosi.", "Pelanggan kembali karena dipercaya.", "Harga boleh naik, kejujuran jangan turun."];
+    
+    // Database v12.2
+    let db = JSON.parse(localStorage.getItem('alfaza_v12_2')) || { bank:0, cash:0, tarik:0, aks:0, laba:0, tr:[], tp:[], awal:{bank:0, cash:0, tarik:0, aks:0, laba:0} };
+    let user = { nama: "", shift: "", login: "" };
+    let katAktif = 'Transfer';
+    let filterKat = 'semua';
+
+    // Set default filter date to today
+    document.getElementById('filter-tgl').valueAsDate = new Date();
+
+    setInterval(() => {
+        const d = new Date();
+        document.getElementById('disp-jam').innerText = d.toLocaleTimeString('id-ID');
+        document.getElementById('disp-hari').innerText = d.toLocaleDateString('id-ID', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+        document.getElementById('kata-mutiara').innerText = KATA_LIST[Math.floor(d.getHours() / 6) % KATA_LIST.length];
+    }, 1000);
+
+    function fmt(el) { let v = el.value.replace(/\D/g,''); el.value = v ? new Intl.NumberFormat('id-ID').format(v) : ''; }
+    function toInt(v) { return parseInt(v.toString().replace(/\D/g,'')) || 0; }
+    function fmtN(v) { return new Intl.NumberFormat('id-ID').format(v); }
+
+    function masuk() {
+        const n = document.getElementById('kasir-select').value;
+        const p = document.getElementById('pin-input').value;
+        if((n==="Kasir 001" && p==="1234") || (n==="Kasir 002" && p==="2345")) {
+            const h = new Date().getHours();
+            const tglKey = new Date().toLocaleDateString('id-ID');
+            let absenLama = localStorage.getItem(`absen_${n}_${tglKey}`);
+            if(!absenLama) {
+                absenLama = new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'});
+                localStorage.setItem(`absen_${n}_${tglKey}`, absenLama);
+                db.awal = { bank: db.bank, cash: db.cash, tarik: db.tarik, aks: db.aks, laba: db.laba };
+                save();
+            }
+            user = { nama: n, login: absenLama, shift: (h < 12) ? "Pagi" : (h < 18) ? "Siang" : "Malam" };
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('main-app').style.display = 'block';
+            document.getElementById('disp-kasir').innerText = user.nama;
+            document.getElementById('disp-shift').innerText = user.shift;
+            document.getElementById('disp-login').innerText = user.login;
+            refresh();
+        } else alert("PIN Salah!");
+    }
+
+    function pilihKat(k) {
+        katAktif = k;
+        document.querySelectorAll('.btn-cat').forEach(b => b.classList.remove('active'));
+        document.getElementById('btn-' + (k==='Transfer'?'tf':k==='Tarik Tunai'?'tt':k==='E-Wallet'?'ew':'ak')).classList.add('active');
+        document.getElementById('box-admin').style.display = (k === 'Aksesoris') ? 'none' : 'block';
+        document.getElementById('box-adm-dalam').style.display = (k === 'Tarik Tunai') ? 'block' : 'none';
+        document.getElementById('t-nom').placeholder = (k === 'Aksesoris') ? 'Harga Barang' : 'Nominal';
+    }
+
+    function simpanTr() {
+        const n = toInt(document.getElementById('t-nom').value), a = toInt(document.getElementById('t-adm').value), ket = document.getElementById('t-ket').value;
+        const isAdmDalam = document.getElementById('is-adm-dalam').checked;
+        if(!n) return alert("Nominal Kosong!");
+
+        const tglISO = new Date().toISOString().split('T')[0];
+
+        if(katAktif==='Transfer' || katAktif==='E-Wallet') { db.bank -= n; db.cash += (n + a); db.laba += a; }
+        else if(katAktif==='Tarik Tunai') {
+            if(isAdmDalam) { db.cash -= n; db.cash += a; }
+            else { db.cash -= n; db.cash += (n + a); }
+            db.tarik += n; db.laba += a;
+        } else if(katAktif==='Aksesoris') { db.aks += n; db.cash += n; }
+
+        db.tr.unshift({ tgl: tglISO, jam: new Date().toLocaleTimeString('id-ID'), kat: katAktif, nom: n, adm: a, ket: ket });
+        resetForm(); refresh(); alert("Berhasil!");
+    }
+
+    function resetForm() {
+        document.getElementById('t-nom').value = ""; document.getElementById('t-adm').value = "";
+        document.getElementById('t-ket').value = ""; document.getElementById('is-adm-dalam').checked = false;
+    }
+
+    function refresh() {
+        document.getElementById('s-bank').innerText = fmtN(db.bank);
+        document.getElementById('s-cash').innerText = fmtN(db.cash);
+        document.getElementById('s-tarik').innerText = fmtN(db.tarik);
+        document.getElementById('s-laba').innerText = fmtN(db.laba);
+        save();
+    }
+
+    function save() { localStorage.setItem('alfaza_v12_2', JSON.stringify(db)); }
+
+    function showHistory() {
+        document.getElementById('main-app').style.display = 'none';
+        document.getElementById('history-page').style.display = 'block';
+        renderSemua();
+    }
+    function hideHistory() {
+        document.getElementById('history-page').style.display = 'none';
+        document.getElementById('main-app').style.display = 'block';
+    }
+
+    function setFilterKat(el, val) {
+        document.querySelectorAll('.filter-capsules .capsule').forEach(c => c.classList.remove('active'));
+        el.classList.add('active'); filterKat = val; renderSemua();
+    }
+
+    function renderSemua() {
+        const tglFilter = document.getElementById('filter-tgl').value;
+        const bodyTr = document.getElementById('list-tr'); 
+        const bodySd = document.getElementById('list-sd');
+        let totalNom = 0, totalAdm = 0, totalSaldo = 0;
+
+        bodyTr.innerHTML = "";
+        db.tr.filter(i => i.tgl === tglFilter && (filterKat === 'semua' || i.kat === filterKat)).forEach(i => {
+            totalNom += i.nom; totalAdm += i.adm;
+            bodyTr.innerHTML += `<tr><td>${i.jam}</td><td><b>${i.kat}</b></td><td>${fmtN(i.nom)}</td><td>${fmtN(i.adm)}</td><td>${i.ket||'-'}</td></tr>`;
+        });
+        document.getElementById('foot-tr').innerHTML = `<tr><td colspan="2">TOTAL</td><td>${fmtN(totalNom)}</td><td>${fmtN(totalAdm)}</td><td></td></tr>`;
+
+        bodySd.innerHTML = "";
+        db.tp.filter(i => i.tgl === tglFilter).forEach(i => {
+            totalSaldo += i.nom;
+            bodySd.innerHTML += `<tr><td>${i.jam}</td><td><b>${i.jenis}</b></td><td>${fmtN(i.nom)}</td><td>${i.ket}</td></tr>`;
+        });
+        document.getElementById('foot-sd').innerHTML = `<tr><td colspan="2">TOTAL TAMBAH</td><td>${fmtN(totalSaldo)}</td><td></td></tr>`;
+    }
+
+    function bukaModal() { const m = document.getElementById('modalSaldo'); m.style.display = (m.style.display === 'flex') ? 'none' : 'flex'; }
+    function prosesModal() {
+        const j = document.getElementById('m-jenis').value, n = toInt(document.getElementById('m-nom').value);
+        if(!n) return;
+        const tglISO = new Date().toISOString().split('T')[0];
+        if(j==='Bank') db.bank += n; else db.cash += n;
+        db.tp.unshift({ tgl: tglISO, jam: new Date().toLocaleTimeString('id-ID'), jenis:j, nom:n, ket:'+ Modal' });
+        bukaModal(); refresh();
+    }
+
+    function keluar() { if(confirm("Keluar?")) { document.getElementById('main-app').style.display = 'none'; document.getElementById('login-screen').style.display = 'block'; } }
+</script>
+</body>
+</html>
