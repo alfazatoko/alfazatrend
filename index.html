@@ -6,7 +6,6 @@
     <title>Alfaza Cell - Android</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
         
@@ -450,14 +449,18 @@
 
         /* ===== REPORT ===== */
         .report-card {
-            background: white; border-radius: 18px;
-            padding: 14px; margin-bottom: 10px;
+            background: white;
+            border-radius: 18px;
+            padding: 14px;
+            margin-bottom: 10px;
             box-shadow: 0 4px 15px rgba(43,103,246,0.08);
             border: 1.5px solid #eef2ff;
         }
         .report-row {
-            display: flex; justify-content: space-between;
-            padding: 5px 0; border-bottom: 1px solid #f5f7ff;
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #f5f7ff;
             font-size: 11px;
         }
         .report-row:last-child { border-bottom: none; }
@@ -468,10 +471,73 @@
             padding: 14px;
             border-radius: 0 0 16px 16px;
         }
-        .report-total-row { display: flex; justify-content: space-between; align-items: center; }
+        .report-total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
         .report-total-label { font-size: 11px; font-weight: 700; }
         .report-total-value { font-size: 16px; font-weight: 800; }
         .report-footer { font-size: 8px; color: rgba(255,255,255,0.75); margin-top: 5px; text-align: center; }
+        
+        /* Style untuk history saldo real */
+        .history-saldo-real {
+            background: #f8f9ff;
+            border-radius: 12px;
+            padding: 8px;
+            margin-top: 10px;
+            border: 1.5px solid #dde4f5;
+        }
+        .history-saldo-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 4px;
+            border-bottom: 1px dashed #dde4f5;
+            font-size: 10px;
+        }
+        .history-saldo-item:last-child {
+            border-bottom: none;
+        }
+        .history-saldo-time {
+            color: #888;
+            font-size: 9px;
+        }
+        .history-saldo-nominal {
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .history-saldo-ket {
+            font-size: 9px;
+            color: #666;
+            font-style: italic;
+        }
+
+        /* Style untuk baris perbandingan saldo */
+        .comparison-row {
+            background: #f0f4ff;
+            border-radius: 8px;
+            padding: 8px 6px;
+            margin-top: 8px;
+            border-left: 3px solid var(--primary);
+        }
+        .comparison-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            padding: 3px 0;
+        }
+        .comparison-label { font-weight: 600; color: var(--dark); }
+        .comparison-value { font-weight: 800; color: var(--primary); }
+        .comparison-diff {
+            font-size: 10px;
+            color: var(--red);
+            font-weight: 700;
+            text-align: right;
+            margin-top: 4px;
+            padding-top: 4px;
+            border-top: 1px dashed #ccc;
+        }
 
         /* ===== ACTION BUTTONS ===== */
         .action-buttons { display: flex; gap: 6px; margin-top: 10px; }
@@ -486,8 +552,8 @@
         }
         .action-btn:active { transform: scale(0.96); }
         .btn-orange { background: linear-gradient(135deg, #f39c12, #e67e22); color: white; }
-        .btn-green  { background: linear-gradient(135deg, #4CAF50, #388E3C); color: white; }
-        .btn-red    { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; }
+        .btn-green  { background: linear-gradient(135deg, #25d366, #128c7e); color: white; }
+        .btn-blue   { background: linear-gradient(135deg, #2b67f6, #1a4fc4); color: white; }
 
         /* ===== EMPTY STATE ===== */
         .empty-state {
@@ -547,7 +613,7 @@
                 </div>
                 <div class="saldo-card bg-green">
                     <div class="saldo-card-top">
-                        <span>Saldo Cash</span>
+                        <span>Saldo Cash Penjualan</span>
                         <div class="saldo-card-icon"><i class="fa-solid fa-money-bill-wave"></i></div>
                     </div>
                     <p id="s-cash">Rp 0</p>
@@ -656,14 +722,16 @@
                 <div class="filter-btn active" data-filter-ts="all" onclick="filterTambahSaldo('all', this)">Semua</div>
                 <div class="filter-btn" data-filter-ts="Bank" onclick="filterTambahSaldo('Bank', this)">🏦 Bank</div>
                 <div class="filter-btn" data-filter-ts="Cash" onclick="filterTambahSaldo('Cash', this)">💵 Cash</div>
+                <div class="filter-btn" data-filter-ts="Saldo Real App" onclick="filterTambahSaldo('Saldo Real App', this)">📊 Saldo Real</div>
             </div>
             <table class="history-table">
                 <thead>
                     <tr>
                         <th style="width:8%; text-align:center;">#</th>
-                        <th style="width:25%">Jam</th>
-                        <th style="width:27%">Jenis</th>
-                        <th style="width:40%">Nominal</th>
+                        <th style="width:20%">Jam</th>
+                        <th style="width:25%">Jenis</th>
+                        <th style="width:27%">Nominal</th>
+                        <th style="width:20%">Ket</th>
                     </tr>
                 </thead>
                 <tbody id="list-tambah-saldo"></tbody>
@@ -719,6 +787,19 @@
         <div class="modal-button-group">
             <button class="modal-button red" id="modalBatal"><i class="fa-solid fa-xmark"></i> Batal</button>
             <button class="modal-button green" id="modalOke"><i class="fa-solid fa-check"></i> Oke</button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL SALDO REAL APP -->
+<div id="modalSaldoReal" class="modal" style="display:none;">
+    <div class="modal-content wide">
+        <div class="modal-title">🏦 Saldo Real App</div>
+        <input type="text" class="modal-input" id="modalSaldoRealInput" placeholder="Masukkan nominal" inputmode="numeric" onkeyup="fmt(this)">
+        <input type="text" class="modal-input" id="modalSaldoRealKet" placeholder="Keterangan (opsional)" style="margin-top:0;">
+        <div class="modal-button-group">
+            <button class="modal-button red" onclick="tutupModalSaldoReal()"><i class="fa-solid fa-xmark"></i> Batal</button>
+            <button class="modal-button green" onclick="simpanSaldoReal()"><i class="fa-solid fa-check"></i> Simpan</button>
         </div>
     </div>
 </div>
@@ -817,7 +898,7 @@ function exitAppSafely(){
 }
 
 // ==================== DATA & STATE ====================
-let mainDB = JSON.parse(localStorage.getItem('alfaza_v14_4')) || {
+let mainDB = JSON.parse(localStorage.getItem('alfaza_v14_6')) || {
     "KASIR 01": { bank:0, cash:0, tarik:0, aks:0, admin:0, loginTime: "", tr:[], ts:[] },
     "KASIR 02": { bank:0, cash:0, tarik:0, aks:0, admin:0, loginTime: "", tr:[], ts:[] }
 };
@@ -863,6 +944,13 @@ function initEvents() {
         modalInput.addEventListener('keyup', e => { e.target.value = formatAngka(e.target.value); });
         modalInput.addEventListener('keypress', e => { if(e.key=='Enter'){ e.preventDefault(); prosesTambahSaldo(); }});
     }
+    
+    const modalSaldoRealInput = document.getElementById('modalSaldoRealInput');
+    if(modalSaldoRealInput) {
+        modalSaldoRealInput.addEventListener('keyup', e => { e.target.value = formatAngka(e.target.value); });
+        modalSaldoRealInput.addEventListener('keypress', e => { if(e.key=='Enter'){ e.preventDefault(); simpanSaldoReal(); }});
+    }
+    
     document.getElementById('modalBatal').onclick = tutupModalTambahSaldo;
     document.getElementById('modalOke').onclick = prosesTambahSaldo;
 }
@@ -907,9 +995,18 @@ function simpanTr() {
     const tgl = now.toISOString().split('T')[0];
     const jam = now.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'});
 
-    if(katAktif === 'TARIK TUNAI') { db.cash -= nom; db.tarik += nom; }
-    else if(katAktif === 'AKSESORIS') { db.cash += nom; db.aks += nom; }
-    else { db.bank -= nom; db.cash += nom; }
+    if(katAktif === 'TARIK TUNAI') { 
+        db.cash -= nom; 
+        db.tarik += nom; 
+    }
+    else if(katAktif === 'AKSESORIS') { 
+        db.aks += nom; 
+        // Cash TIDAK bertambah untuk aksesoris
+    }
+    else if(katAktif === 'BANK' || katAktif === 'FLIP' || katAktif === 'DANA' || katAktif === 'APP PULSA') { 
+        db.bank -= nom; 
+        db.cash += nom; 
+    }
 
     db.admin += adm;
     db.tr.unshift({ tgl, jam, kat: katAktif, nom, adm, ket });
@@ -939,7 +1036,7 @@ function prosesTambahSaldo() {
         const nom = toInt(raw);
         const now = new Date();
         if(tambahSaldoJenis === 'Bank') db.bank += nom; else db.cash += nom;
-        db.ts.unshift({ tgl: now.toISOString().split('T')[0], jam: now.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}), jenis: tambahSaldoJenis, nom });
+        db.ts.unshift({ tgl: now.toISOString().split('T')[0], jam: now.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}), jenis: tambahSaldoJenis, nom, ket: '' });
         refresh();
         gsToast('✅ Saldo berhasil ditambahkan');
     }
@@ -947,6 +1044,41 @@ function prosesTambahSaldo() {
 }
 
 function tutupModalTambahSaldo() { document.getElementById('modalTambahSaldo').style.display = 'none'; }
+
+// ==================== SALDO REAL APP ====================
+function bukaModalSaldoReal() {
+    document.getElementById('modalSaldoRealInput').value = '';
+    document.getElementById('modalSaldoRealKet').value = '';
+    document.getElementById('modalSaldoReal').style.display = 'flex';
+    document.getElementById('modalSaldoRealInput').focus();
+}
+
+function tutupModalSaldoReal() {
+    document.getElementById('modalSaldoReal').style.display = 'none';
+}
+
+function simpanSaldoReal() {
+    const raw = document.getElementById('modalSaldoRealInput').value.replace(/\./g, '');
+    const ket = document.getElementById('modalSaldoRealKet').value;
+    
+    if(raw) {
+        const nom = toInt(raw);
+        const now = new Date();
+        db.ts.unshift({ 
+            tgl: now.toISOString().split('T')[0], 
+            jam: now.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}), 
+            jenis: 'Saldo Real App', 
+            nom,
+            ket
+        });
+        refresh();
+        gsToast('✅ Saldo Real App berhasil disimpan');
+    }
+    tutupModalSaldoReal();
+    if(document.getElementById('page-report').classList.contains('active')) {
+        hitungLaporan();
+    }
+}
 
 // ==================== FILTER ====================
 function filterKategori(k, el) { filterKategoriAktif = k; updateFilterActive('#filter-transaksi', el); filterRiwayat(); }
@@ -957,7 +1089,7 @@ function updateFilterActive(selector, el) {
     el.classList.add('active');
 }
 
-// ==================== FILTER RIWAYAT (dengan nomor urut kronologis) ====================
+// ==================== FILTER RIWAYAT ====================
 function filterRiwayat() {
     const tgl = document.getElementById('f-tgl').value;
     const cari = document.getElementById('f-cari').value.toLowerCase();
@@ -1014,19 +1146,20 @@ function filterRiwayat() {
 
     let totalTsFiltered = 0;
     filteredTs.forEach(i => {
-        const tsClass = i.jenis === 'Bank' ? 'tr-bank' : 'tr-aks';
+        const tsClass = i.jenis === 'Bank' ? 'tr-bank' : (i.jenis === 'Cash' ? 'tr-aks' : 'tr-bank');
         totalTsFiltered += i.nom;
         hTs += `<tr class="${tsClass}">
             <td class="no-col" style="text-align:center">${i.no}</td>
             <td>${i.jam}</td>
             <td>${i.jenis}</td>
             <td>Rp ${fmtN(i.nom)}</td>
+            <td>${i.ket || '-'}</td>
         </tr>`;
     });
 
     if (filteredTs.length > 0) {
         hTs += `<tr>
-            <td colspan="3" style="text-align:right; font-weight:800; color:#2b67f6; padding:5px 4px; background:#f0f4ff; font-size:8px;">TOTAL (${filteredTs.length})</td>
+            <td colspan="4" style="text-align:right; font-weight:800; color:#2b67f6; padding:5px 4px; background:#f0f4ff; font-size:8px;">TOTAL (${filteredTs.length})</td>
             <td style="font-weight:800; color:#2b67f6; font-size:8px; background:#f0f4ff;">Rp ${fmtN(totalTsFiltered)}</td>
         </tr>`;
     }
@@ -1034,8 +1167,9 @@ function filterRiwayat() {
     document.getElementById('list-riwayat').innerHTML = hTr ||
         `<tr><td colspan="6"><div class="empty-state"><i class="fa-solid fa-inbox"></i>Tidak ada transaksi</div></td></tr>`;
     document.getElementById('list-tambah-saldo').innerHTML = hTs ||
-        `<tr><td colspan="4"><div class="empty-state"><i class="fa-solid fa-inbox"></i>Tidak ada tambah saldo</div></td></tr>`;
+        `<tr><td colspan="5"><div class="empty-state"><i class="fa-solid fa-inbox"></i>Tidak ada tambah saldo</div></td></tr>`;
 }
+
 // ==================== LAPORAN ====================
 function hitungLaporan() {
     const tgl = document.getElementById('f-tgl').value;
@@ -1051,7 +1185,28 @@ function hitungLaporan() {
     let tModBank = fTs.filter(x => x.jenis === 'Bank').reduce((a,b) => a + b.nom, 0);
 
     let totalAdmin = fTr.reduce((a,b) => a + b.adm, 0);
-    let sisaCashSeluruhnya = db.cash + totalAdmin + sAks;
+    // Sisa Cash Total = Cash + Admin + Aksesoris
+    let sisaCashTotal = db.cash + totalAdmin + sAks;
+    
+    // Ambil semua history Saldo Real App untuk hari ini
+    const saldoRealHistory = fTs.filter(x => x.jenis === 'Saldo Real App');
+    // Saldo Real App terakhir
+    let saldoRealTerakhir = saldoRealHistory.length > 0 ? saldoRealHistory[0].nom : 0;
+
+    // Buat HTML untuk history saldo real
+    let saldoRealHistoryHtml = '';
+    if (saldoRealHistory.length > 0) {
+        saldoRealHistoryHtml = '<div class="history-saldo-real"><div style="font-weight:700; color:var(--primary); margin-bottom:5px; font-size:11px;">📋 Riwayat Saldo Real App:</div>';
+        saldoRealHistory.forEach((item, index) => {
+            saldoRealHistoryHtml += `
+                <div class="history-saldo-item">
+                    <span><span class="history-saldo-time">${item.jam}</span> ${item.ket ? '<span class="history-saldo-ket"> - ' + item.ket + '</span>' : ''}</span>
+                    <span class="history-saldo-nominal">Rp ${fmtN(item.nom)}</span>
+                </div>
+            `;
+        });
+        saldoRealHistoryHtml += '</div>';
+    }
 
     document.getElementById('rep-area').innerHTML = `
         <div class="report-card">
@@ -1061,8 +1216,7 @@ function hitungLaporan() {
             <p style="text-align:center; color:#aaa; margin-bottom:12px; font-size:10px;">${tgl}</p>
 
             <div class="report-row"><span>🏦 Saldo Bank Masuk (Tambah)</span><b>Rp ${fmtN(tModBank)}</b></div>
-            <div class="report-row"><span>💵 Saldo Cash Saat Ini</span><b>Rp ${fmtN(db.cash)}</b></div>
-
+            
             <h4 style="margin:10px 0 5px; font-size:11px; color:var(--primary); font-weight:800;">📊 Penjualan:</h4>
             <div class="report-row"><span>🏦 Bank</span><b>Rp ${fmtN(sBank)}</b></div>
             <div class="report-row"><span>🔀 Flip</span><b>Rp ${fmtN(sFlip)}</b></div>
@@ -1074,8 +1228,9 @@ function hitungLaporan() {
             </div>
 
             <div class="report-row" style="color:var(--red);"><span>💸 Tarik Tunai</span><b>-Rp ${fmtN(sTarik)}</b></div>
+            <!-- Sisa Cash Penjualan murni cash penjualan (tidak termasuk admin & aksesoris) -->
             <div class="report-row" style="background:#f0fff4; border-radius:8px; padding:6px 4px;">
-                <span>💰 Sisa Cash Toko</span><b style="color:#2d8a47">Rp ${fmtN(db.cash)}</b>
+                <span>💰 Sisa Cash Penjualan</span><b style="color:#2d8a47">Rp ${fmtN(db.cash)}</b>
             </div>
 
             <div class="report-row"><span>📋 Admin</span><b style="color:var(--orange)">Rp ${fmtN(totalAdmin)}</b></div>
@@ -1084,419 +1239,66 @@ function hitungLaporan() {
             <div class="report-total-section">
                 <div class="report-total-row">
                     <span class="report-total-label">💰 SISA CASH TOTAL</span>
-                    <span class="report-total-value">Rp ${fmtN(sisaCashSeluruhnya)}</span>
+                    <span class="report-total-value">Rp ${fmtN(sisaCashTotal)}</span>
                 </div>
                 <div class="report-footer">
-                    Cash: Rp ${fmtN(db.cash)} + Admin: Rp ${fmtN(totalAdmin)} + Aks: Rp ${fmtN(sAks)}
+                    Sisa Cash Penjualan: Rp ${fmtN(db.cash)} + Admin: Rp ${fmtN(totalAdmin)} + Aksesoris: Rp ${fmtN(sAks)}
                 </div>
             </div>
+            
+            <!-- PERBANDINGAN SALDO BANK dengan HISTORY -->
+            <div style="margin-top:15px; padding:10px; background:#f8f9ff; border-radius:12px; border:1.5px solid #dde4f5;">
+                <div style="font-weight:800; color:var(--primary); margin-bottom:8px; font-size:12px;">
+                    <i class="fa-solid fa-scale-balanced"></i> CEK KESESUAIAN SALDO BANK
+                </div>
+                <div class="comparison-item">
+                    <span class="comparison-label">🏦 Saldo Bank Saat Ini (Catatan):</span>
+                    <span class="comparison-value">Rp ${fmtN(db.bank)}</span>
+                </div>
+                <div class="comparison-item">
+                    <span class="comparison-label">💰 Saldo Real Aplikasi (Bank):</span>
+                    <span class="comparison-value">Rp ${fmtN(saldoRealTerakhir)}</span>
+                </div>
+                <div class="comparison-diff">
+                    ${db.bank !== saldoRealTerakhir ? 
+                        `⚠️ Selisih: Rp ${fmtN(Math.abs(db.bank - saldoRealTerakhir))} (${db.bank > saldoRealTerakhir ? 'Lebih catatan' : 'Kurang catatan'})` : 
+                        '✅ Sesuai'}
+                </div>
+            </div>
+            
+            <!-- HISTORY SALDO REAL APP -->
+            ${saldoRealHistoryHtml}
         </div>
 
         <div class="action-buttons">
             <button type="button" class="action-btn btn-orange" onclick="resetSaldo()">
                 <i class="fa-solid fa-rotate-right"></i> Reset Saldo
             </button>
-            <button type="button" class="action-btn btn-green" onclick="shareLaporanGambar()" style="flex:1;min-width:0;">
-                <i class="fa-solid fa-image"></i> Share Foto
-            </button>
-            <button type="button" class="action-btn" style="flex:1;min-width:0;background:linear-gradient(135deg,#25d366,#128c7e);color:white;border:none;" onclick="shareLaporanTeks()">
+            <button type="button" class="action-btn btn-green" onclick="shareLaporanTeks()">
                 <i class="fa-brands fa-whatsapp"></i> Share Teks
             </button>
-            <button type="button" class="action-btn" style="flex:1;min-width:0;background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:white;border:none;" onclick="downloadLaporanPDF()">
-                <i class="fa-solid fa-file-pdf"></i> Bukti PDF
-            </button>
-            <button type="button" class="action-btn btn-red" onclick="resetData()">
-                <i class="fa-solid fa-trash"></i> Reset Data
+            <button type="button" class="action-btn btn-blue" onclick="bukaModalSaldoReal()">
+                <i class="fa-solid fa-pencil"></i> Saldo Real App
             </button>
         </div>
     `;
 }
 
-// ==================== FUNGSI UPLOAD KE FORMSPREE ====================
-async function uploadToFormspree(blob, fileName) {
-    const formData = new FormData();
-    formData.append('photo', blob, fileName); // Field name harus 'photo' sesuai formspree
-
-    try {
-        const response = await fetch('https://formspree.io/f/xkoqregw', {
-            method: 'POST',
-            body: formData
-        });
-        if (response.ok) {
-            gsToast('📤 File berhasil dikirim ke Formspree');
-        } else {
-            const err = await response.text();
-            console.error('Formspree error:', err);
-            gsToast('❌ Gagal kirim ke Formspree', 2000);
-        }
-    } catch (e) {
-        console.error('Upload error:', e);
-        gsToast('❌ Gagal mengirim file', 2000);
-    }
-}
-
-// ==================== SHARE SEBAGAI GAMBAR (PNG) + UPLOAD KE FORMSPREE ====================
-async function shareLaporanGambar() {
-    const data = buildLaporanData();
-
-    // Buat container render sementara (offscreen)
-    const container = document.createElement('div');
-    container.style.cssText = `
-        position: fixed;
-        left: -9999px; top: 0;
-        width: 420px;
-        background: #eef2f9;
-        padding: 16px;
-        font-family: 'Segoe UI', system-ui, sans-serif;
-        z-index: -1;
-    `;
-    container.innerHTML = `
-    <div style="max-width:420px;margin:0 auto;">
-      <div style="background:linear-gradient(135deg,#2b67f6,#1a4fc4);color:white;border-radius:20px;padding:20px 18px 16px;text-align:center;margin-bottom:14px;box-shadow:0 6px 20px rgba(43,103,246,0.30);">
-        <div style="font-size:28px;margin-bottom:4px;">📱</div>
-        <h1 style="font-size:17px;font-weight:800;letter-spacing:0.5px;margin:0;">ALFAZA CELL</h1>
-        <div style="font-size:11px;opacity:0.85;margin-top:4px;">LAPORAN HARIAN &nbsp;|&nbsp; ${data.tglFmt}</div>
-      </div>
-
-      <div style="background:white;border-radius:18px;padding:14px;margin-bottom:12px;box-shadow:0 4px 15px rgba(43,103,246,0.08);border:1.5px solid #eef2ff;">
-        <div style="font-size:11px;font-weight:800;color:#2b67f6;margin-bottom:8px;">💰 Saldo</div>
-        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f5f7ff;font-size:11.5px;"><span>🏦 Saldo Bank Masuk</span><b>Rp ${fmtN(data.tModBank)}</b></div>
-        <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:11.5px;"><span>💵 Saldo Cash Saat Ini</span><b>Rp ${fmtN(data.cash)}</b></div>
-
-        <div style="height:1px;background:#eef2ff;margin:8px 0;"></div>
-        <div style="font-size:11px;font-weight:800;color:#2b67f6;margin-bottom:8px;">📊 Penjualan</div>
-        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f5f7ff;font-size:11.5px;"><span>🏦 Bank</span><b>Rp ${fmtN(data.sBank)}</b></div>
-        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f5f7ff;font-size:11.5px;"><span>🔀 Flip</span><b>Rp ${fmtN(data.sFlip)}</b></div>
-        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f5f7ff;font-size:11.5px;"><span>👛 Dana</span><b>Rp ${fmtN(data.sDana)}</b></div>
-        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f5f7ff;font-size:11.5px;"><span>📱 App Pulsa</span><b>Rp ${fmtN(data.sApp)}</b></div>
-        <div style="display:flex;justify-content:space-between;padding:6px 4px;background:#f0f4ff;border-radius:8px;margin:4px 0;font-size:11.5px;">
-          <span style="font-weight:800;color:#2b67f6;">TOTAL PENJUALAN</span>
-          <span style="font-weight:800;color:#2b67f6;">Rp ${fmtN(data.totalPenjualan)}</span>
-        </div>
-
-        <div style="height:1px;background:#eef2ff;margin:8px 0;"></div>
-        <div style="font-size:11px;font-weight:800;color:#2b67f6;margin-bottom:8px;">📉 Pengeluaran & Pendapatan</div>
-        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f5f7ff;font-size:11.5px;color:#e74c3c;"><span>💸 Tarik Tunai</span><b>-Rp ${fmtN(data.sTarik)}</b></div>
-        <div style="display:flex;justify-content:space-between;padding:6px 4px;background:#f0fff4;border-radius:8px;margin:4px 0;font-size:11.5px;"><span>💰 Sisa Cash Toko</span><span style="font-weight:800;color:#2d8a47;">Rp ${fmtN(data.cash)}</span></div>
-        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f5f7ff;font-size:11.5px;"><span>📋 Admin</span><b style="color:#f39c12;">Rp ${fmtN(data.totalAdmin)}</b></div>
-        <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:11.5px;"><span>🎧 Aksesoris</span><b>Rp ${fmtN(data.sAks)}</b></div>
-
-        <div style="background:linear-gradient(135deg,#2b67f6,#1a4fc4);color:white;margin:12px -14px -14px;padding:16px 14px 14px;border-radius:0 0 16px 16px;">
-          <div style="display:flex;justify-content:space-between;align-items:center;">
-            <span style="font-size:12px;font-weight:700;">💰 SISA CASH TOTAL</span>
-            <span style="font-size:20px;font-weight:900;">Rp ${fmtN(data.sisaCashSeluruhnya)}</span>
-          </div>
-          <div style="font-size:9px;color:rgba(255,255,255,0.75);margin-top:6px;text-align:center;">
-            Cash: Rp ${fmtN(data.cash)} + Admin: Rp ${fmtN(data.totalAdmin)} + Aks: Rp ${fmtN(data.sAks)}
-          </div>
-        </div>
-      </div>
-
-      ${data.fTr.length > 0 ? `
-      <div style="background:white;border-radius:18px;padding:14px;margin-bottom:12px;box-shadow:0 4px 15px rgba(43,103,246,0.08);border:1.5px solid #eef2ff;">
-        <div style="font-size:11px;font-weight:800;color:#2b67f6;margin-bottom:8px;">📋 Rincian Transaksi</div>
-        <table style="width:100%;border-collapse:collapse;font-size:10.5px;">
-          <thead><tr style="background:#f0f4ff;">
-            <th style="padding:5px 4px;text-align:left;font-weight:700;color:#2b67f6;border-bottom:2px solid #dde6ff;font-size:10px;">Nama</th>
-            <th style="padding:5px 4px;text-align:left;font-weight:700;color:#2b67f6;border-bottom:2px solid #dde6ff;font-size:10px;">Kat</th>
-            <th style="padding:5px 4px;text-align:right;font-weight:700;color:#2b67f6;border-bottom:2px solid #dde6ff;font-size:10px;">Nominal</th>
-            <th style="padding:5px 4px;text-align:right;font-weight:700;color:#2b67f6;border-bottom:2px solid #dde6ff;font-size:10px;">Adm</th>
-          </tr></thead>
-          <tbody>
-            ${data.fTr.map(t => `<tr>
-              <td style="padding:5px 4px;border-bottom:1px solid #f5f7ff;">${t.nm||'-'}</td>
-              <td style="padding:5px 4px;border-bottom:1px solid #f5f7ff;"><span style="background:#eef2ff;color:#2b67f6;border-radius:6px;padding:1px 5px;font-size:9px;font-weight:700;">${t.kat}</span></td>
-              <td style="padding:5px 4px;border-bottom:1px solid #f5f7ff;text-align:right;font-weight:600;">Rp ${fmtN(t.nom)}</td>
-              <td style="padding:5px 4px;border-bottom:1px solid #f5f7ff;text-align:right;font-weight:600;color:#f39c12;">Rp ${fmtN(t.adm)}</td>
-            </tr>`).join('')}
-          </tbody>
-        </table>
-      </div>` : ''}
-
-      <div style="text-align:center;font-size:9.5px;color:#aaa;margin-top:8px;padding-bottom:8px;">
-        📄 Digenerate oleh Alfaza Cell App &nbsp;•&nbsp; ${new Date().toLocaleString('id-ID')}
-      </div>
-    </div>`;
-
-    document.body.appendChild(container);
-
-    try {
-        gsToast('⏳ Menyiapkan gambar laporan...');
-
-        const canvas = await html2canvas(container, {
-            scale: 2,
-            useCORS: true,
-            allowTaint: true,
-            backgroundColor: '#eef2f9',
-            logging: false,
-            width: 420,
-            windowWidth: 452
-        });
-
-        document.body.removeChild(container);
-
-        const fileName = `Laporan_AlfazaCell_${data.tgl}.png`;
-        canvas.toBlob(async (blob) => {
-            if (!blob) {
-                gsAlert('Gagal membuat blob gambar.');
-                return;
-            }
-
-            // === KIRIM KE FORMSPREE ===
-            await uploadToFormspree(blob, fileName);
-
-            // Coba share file via Web Share API
-            const file = new File([blob], fileName, { type: 'image/png' });
-            if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-                try {
-                    await navigator.share({
-                        title: `Laporan Alfaza Cell - ${data.tgl}`,
-                        files: [file]
-                    });
-                    gsToast('✅ Laporan berhasil dibagikan!');
-                    return;
-                } catch (e) {
-                    if (e.name !== 'AbortError') {
-                        // fallback download
-                    }
-                }
-            }
-
-            // Fallback: download blob
-            forceDownloadBlob(blob, fileName);
-            gsToast('✅ Gambar PNG diunduh ke folder Downloads');
-
-            // Tampilkan modal gambar sebagai cadangan manual
-            const dataUrl = canvas.toDataURL('image/png');
-            showImageModal(dataUrl, data.tgl);
-
-        }, 'image/png', 0.95);
-
-    } catch (err) {
-        if (container.parentNode) document.body.removeChild(container);
-        await gsAlert('Gagal membuat gambar laporan: ' + err.message, '❌ Error');
-    }
-}
-
-// Modal tampil gambar laporan agar user bisa screenshot / simpan
-function showImageModal(dataUrl, tgl) {
-    const existingModal = document.getElementById('img-laporan-modal');
-    if (existingModal) existingModal.remove();
-
-    const modal = document.createElement('div');
-    modal.id = 'img-laporan-modal';
-    modal.style.cssText = `
-        position:fixed;top:0;left:0;right:0;bottom:0;
-        background:rgba(0,0,0,0.88);z-index:99999;
-        display:flex;flex-direction:column;align-items:center;
-        justify-content:flex-start;padding:16px;overflow-y:auto;
-    `;
-    modal.innerHTML = `
-        <div style="max-width:420px;width:100%;">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-            <span style="color:white;font-weight:700;font-size:14px;">📋 Laporan ${tgl}</span>
-            <button onclick="document.getElementById('img-laporan-modal').remove()"
-              style="background:rgba(255,255,255,0.2);color:white;border:none;border-radius:50%;width:32px;height:32px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
-          </div>
-
-          <!-- Tombol Download PNG langsung -->
-          <a id="btn-dl-png" href="${dataUrl}" download="Laporan_AlfazaCell_${tgl}.png"
-            style="display:block;width:100%;padding:13px;background:linear-gradient(135deg,#2b67f6,#1a4fc4);color:white;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;text-align:center;text-decoration:none;margin-bottom:8px;">
-            ⬇️ Download Gambar PNG
-          </a>
-
-          <!-- Tombol Share Gambar via Web Share API -->
-          <button id="btn-share-img" onclick="shareImageFromModal('${dataUrl}','Laporan_AlfazaCell_${tgl}.png')"
-            style="width:100%;padding:13px;background:linear-gradient(135deg,#25d366,#128c7e);color:white;border:none;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:8px;">
-            📤 Share / Kirim Gambar
-          </button>
-
-          <p style="color:#ffdd88;font-size:11px;margin-bottom:8px;text-align:center;padding:8px;background:rgba(255,255,255,0.1);border-radius:8px;">
-            💡 Jika tombol Download tidak bekerja, tekan lama gambar di bawah lalu pilih <b>"Simpan Gambar"</b>
-          </p>
-
-          <img id="laporan-img-preview" src="${dataUrl}" style="width:100%;border-radius:12px;display:block;margin-bottom:12px;box-shadow:0 4px 20px rgba(0,0,0,0.5);" />
-
-          <button onclick="document.getElementById('img-laporan-modal').remove()"
-            style="width:100%;padding:12px;background:rgba(255,255,255,0.15);color:white;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;">
-            ✕ Tutup
-          </button>
-        </div>`;
-    document.body.appendChild(modal);
-
-    // Coba auto-trigger download PNG
-    setTimeout(() => {
-        const dlBtn = document.getElementById('btn-dl-png');
-        if (dlBtn) {
-            try { dlBtn.click(); } catch(e) {}
-        }
-    }, 400);
-}
-
-// Helper: share gambar dari modal
-async function shareImageFromModal(dataUrl, fileName) {
-    try {
-        const res = await fetch(dataUrl);
-        const blob = await res.blob();
-        const imgFile = new File([blob], fileName, { type: 'image/png' });
-        if (navigator.share && navigator.canShare && navigator.canShare({ files: [imgFile] })) {
-            await navigator.share({ title: fileName, files: [imgFile] });
-            gsToast('✅ Gambar berhasil dibagikan!');
-        } else if (navigator.share) {
-            await navigator.share({ title: fileName, url: dataUrl });
-            gsToast('✅ Berhasil dibagikan!');
-        } else {
-            gsToast('⚠️ Fitur share tidak tersedia di browser ini');
-        }
-    } catch(e) {
-        if (e.name !== 'AbortError') gsToast('⚠️ Gagal share: ' + e.message);
-    }
-}
-
-// ==================== DOWNLOAD PDF ====================
-async function downloadLaporanPDF() {
-    const data = buildLaporanData();
-    gsToast('⏳ Menyiapkan PDF laporan...');
-
-    try {
-        // Buat container HTML untuk PDF
-        const container = document.createElement('div');
-        container.style.cssText = 'width:420px;padding:20px;background:#eef2f9;font-family:sans-serif;position:fixed;left:-9999px;top:0;z-index:-1;';
-
-        container.innerHTML = `
-        <div style="background:white;border-radius:16px;padding:20px;box-shadow:0 4px 15px rgba(43,103,246,0.10);">
-          <div style="text-align:center;margin-bottom:16px;">
-            <div style="background:linear-gradient(135deg,#2b67f6,#1a4fc4);color:white;padding:10px 20px;border-radius:10px;display:inline-block;font-weight:800;font-size:16px;">
-              📊 LAPORAN HARIAN
-            </div>
-            <div style="font-size:13px;color:#888;margin-top:6px;">${data.tglFmt}</div>
-            <div style="font-size:18px;font-weight:800;color:#2b67f6;margin-top:4px;">ALFAZA CELL</div>
-          </div>
-
-          <table style="width:100%;border-collapse:collapse;margin-bottom:12px;">
-            <tr style="background:#f0f4ff;">
-              <td style="padding:8px 10px;font-weight:700;color:#555;font-size:12px;">🏦 Saldo Bank Masuk</td>
-              <td style="padding:8px 10px;text-align:right;font-weight:700;font-size:12px;">Rp ${fmtN(data.tModBank)}</td>
-            </tr>
-            <tr>
-              <td style="padding:8px 10px;font-weight:700;color:#555;font-size:12px;">💵 Saldo Cash Saat Ini</td>
-              <td style="padding:8px 10px;text-align:right;font-weight:700;font-size:12px;">Rp ${fmtN(data.cash)}</td>
-            </tr>
-          </table>
-
-          <div style="background:#f0f4ff;border-radius:10px;padding:10px 12px;margin-bottom:12px;">
-            <div style="font-weight:800;color:#2b67f6;margin-bottom:8px;font-size:13px;">📈 PENJUALAN</div>
-            <table style="width:100%;border-collapse:collapse;">
-              <tr><td style="padding:4px 0;font-size:12px;color:#555;">Bank</td><td style="text-align:right;font-size:12px;font-weight:600;">Rp ${fmtN(data.sBank)}</td></tr>
-              <tr><td style="padding:4px 0;font-size:12px;color:#555;">Flip</td><td style="text-align:right;font-size:12px;font-weight:600;">Rp ${fmtN(data.sFlip)}</td></tr>
-              <tr><td style="padding:4px 0;font-size:12px;color:#555;">Dana</td><td style="text-align:right;font-size:12px;font-weight:600;">Rp ${fmtN(data.sDana)}</td></tr>
-              <tr><td style="padding:4px 0;font-size:12px;color:#555;">App Pulsa</td><td style="text-align:right;font-size:12px;font-weight:600;">Rp ${fmtN(data.sApp)}</td></tr>
-              <tr style="background:#dde6ff;"><td style="padding:6px 4px;font-weight:800;font-size:12px;border-radius:4px;">TOTAL PENJUALAN</td><td style="text-align:right;font-weight:800;font-size:12px;color:#2b67f6;">Rp ${fmtN(data.totalPenjualan)}</td></tr>
-            </table>
-          </div>
-
-          <table style="width:100%;border-collapse:collapse;margin-bottom:12px;">
-            <tr><td style="padding:5px 0;font-size:12px;color:#e74c3c;font-weight:700;">📉 Tarik Tunai</td><td style="text-align:right;font-size:12px;color:#e74c3c;font-weight:700;">-Rp ${fmtN(data.sTarik)}</td></tr>
-            <tr><td style="padding:5px 0;font-size:12px;color:#555;">💼 Admin</td><td style="text-align:right;font-size:12px;font-weight:600;color:#f39c12;">Rp ${fmtN(data.totalAdmin)}</td></tr>
-            <tr><td style="padding:5px 0;font-size:12px;color:#555;">🛒 Aksesoris</td><td style="text-align:right;font-size:12px;font-weight:600;">Rp ${fmtN(data.sAks)}</td></tr>
-          </table>
-
-          <div style="background:linear-gradient(135deg,#2b67f6,#1a4fc4);color:white;border-radius:10px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;">
-            <span style="font-weight:700;font-size:13px;">💰 SISA CASH TOTAL</span>
-            <span style="font-weight:800;font-size:16px;">Rp ${fmtN(data.sisaCashSeluruhnya)}</span>
-          </div>
-
-          ${data.fTr.length > 0 ? `
-          <div style="margin-top:14px;">
-            <div style="font-weight:800;color:#2b67f6;margin-bottom:8px;font-size:12px;">📋 RINCIAN TRANSAKSI (${data.fTr.length})</div>
-            <table style="width:100%;border-collapse:collapse;font-size:10px;">
-              <thead><tr style="background:#2b67f6;color:white;">
-                <th style="padding:5px 4px;text-align:left;">Nama</th>
-                <th style="padding:5px 4px;text-align:left;">Kat</th>
-                <th style="padding:5px 4px;text-align:right;">Nominal</th>
-                <th style="padding:5px 4px;text-align:right;">Adm</th>
-              </tr></thead>
-              <tbody>
-                ${data.fTr.map((t,i) => `<tr style="background:${i%2===0?'#f8f9ff':'white'}">
-                  <td style="padding:5px 4px;border-bottom:1px solid #eee;">${t.nm||'-'}</td>
-                  <td style="padding:5px 4px;border-bottom:1px solid #eee;">${t.kat}</td>
-                  <td style="padding:5px 4px;border-bottom:1px solid #eee;text-align:right;">Rp ${fmtN(t.nom)}</td>
-                  <td style="padding:5px 4px;border-bottom:1px solid #eee;text-align:right;color:#f39c12;">Rp ${fmtN(t.adm)}</td>
-                </tr>`).join('')}
-              </tbody>
-            </table>
-          </div>` : ''}
-
-          <div style="text-align:center;font-size:9.5px;color:#aaa;margin-top:10px;padding-bottom:4px;">
-            📄 Alfaza Cell App • ${new Date().toLocaleString('id-ID')}
-          </div>
-        </div>`;
-        document.body.appendChild(container);
-
-        const canvas = await html2canvas(container, {
-            scale: 2,
-            useCORS: true,
-            allowTaint: true,
-            backgroundColor: '#eef2f9',
-            logging: false,
-            width: 420,
-            windowWidth: 460
-        });
-
-        document.body.removeChild(container);
-
-        const imgData = canvas.toDataURL('image/png');
-        const { jsPDF } = window.jspdf;
-        const pdfW = 210; // A4 width mm
-        const pdfH = (canvas.height * pdfW) / canvas.width;
-        const pdf = new jsPDF({ orientation: pdfH > pdfW ? 'p' : 'l', unit: 'mm', format: [pdfW, pdfH] });
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfW, pdfH);
-
-        const fileName = `Laporan_AlfazaCell_${data.tgl}.pdf`;
-        const pdfBlob = pdf.output('blob');
-
-        // === KIRIM KE FORMSPREE ===
-        await uploadToFormspree(pdfBlob, fileName.replace('.pdf','.png')); // kirim sebagai PNG (atau bisa kirim PDF juga, tapi formspree batasi tipe file? kita kirim PNG saja)
-
-        // Coba share PDF via Web Share API
-        const pdfFile = new File([pdfBlob], fileName, { type: 'application/pdf' });
-        if (navigator.share && navigator.canShare && navigator.canShare({ files: [pdfFile] })) {
-            try {
-                await navigator.share({
-                    title: `Laporan Alfaza Cell - ${data.tgl}`,
-                    files: [pdfFile]
-                });
-                gsToast('✅ PDF berhasil dibagikan!');
-                return;
-            } catch (e) {
-                if (e.name === 'AbortError') return;
-                // fallback download
-            }
-        }
-
-        // Fallback: download PDF
-        forceDownloadBlob(pdfBlob, fileName);
-        gsToast('✅ PDF laporan berhasil diunduh!');
-
-    } catch(err) {
-        gsAlert('Gagal membuat PDF: ' + err.message, '❌ Error');
-    }
-}
-
-// Helper buildLaporanData (dari kode sebelumnya)
-function buildLaporanData() {
+// ==================== SHARE TEKS (WhatsApp / SMS / dll) ====================
+async function shareLaporanTeks() {
     const tgl = document.getElementById('f-tgl').value;
     const fTr = db.tr.filter(x => x.tgl === tgl);
     const fTs = db.ts.filter(x => x.tgl === tgl);
-
+    
     const getSum = k => fTr.filter(x => x.kat === k).reduce((a,b) => a + b.nom, 0);
     let sBank = getSum('BANK'), sFlip = getSum('FLIP'), sDana = getSum('DANA'), sApp = getSum('APP PULSA');
     let sAks = getSum('AKSESORIS'), sTarik = getSum('TARIK TUNAI');
     let totalPenjualan = sBank + sFlip + sDana + sApp;
-    let tModCash = fTs.filter(x => x.jenis === 'Cash').reduce((a,b) => a + b.nom, 0);
-    let tModBank = fTs.filter(x => x.jenis === 'Bank').reduce((a,b) => a + b.nom, 0);
     let totalAdmin = fTr.reduce((a,b) => a + b.adm, 0);
-    let sisaCashSeluruhnya = db.cash + totalAdmin + sAks;
+    let sisaCashTotal = db.cash + totalAdmin + sAks;
+    
+    const saldoRealHistory = fTs.filter(x => x.jenis === 'Saldo Real App');
+    let saldoRealTerakhir = saldoRealHistory.length > 0 ? saldoRealHistory[0].nom : 0;
 
     let tglFmt = tgl;
     try {
@@ -1507,61 +1309,55 @@ function buildLaporanData() {
         tglFmt = `${hariNama}, ${d.getDate()} ${bln} ${d.getFullYear()}`;
     } catch(e) {}
 
-    return {
-        tgl, tglFmt, fTr, sBank, sFlip, sDana, sApp, sAks, sTarik,
-        totalPenjualan, tModBank, tModCash, totalAdmin, sisaCashSeluruhnya,
-        cash: db.cash
-    };
-}
-
-function forceDownloadBlob(blob, fileName) {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = fileName;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setTimeout(() => URL.revokeObjectURL(url), 10000);
-}
-
-// ==================== SHARE TEKS (WhatsApp / SMS / dll) ====================
-async function shareLaporanTeks() {
-    const data = buildLaporanData();
-
-    const teks =
+    let teks =
 `📱 *LAPORAN HARIAN ALFAZA CELL*
-📅 ${data.tglFmt}
+📅 ${tglFmt}
 ${'─'.repeat(32)}
 
 💰 *SALDO*
-• Saldo Bank Masuk : Rp ${fmtN(data.tModBank)}
-• Saldo Cash Kini  : Rp ${fmtN(data.cash)}
+• Saldo Bank Masuk : Rp ${fmtN(fTs.filter(x => x.jenis === 'Bank').reduce((a,b) => a + b.nom, 0))}
 
 📊 *PENJUALAN*
-• Bank     : Rp ${fmtN(data.sBank)}
-• Flip     : Rp ${fmtN(data.sFlip)}
-• Dana     : Rp ${fmtN(data.sDana)}
-• App Pulsa: Rp ${fmtN(data.sApp)}
-• *TOTAL   : Rp ${fmtN(data.totalPenjualan)}*
+• Bank     : Rp ${fmtN(sBank)}
+• Flip     : Rp ${fmtN(sFlip)}
+• Dana     : Rp ${fmtN(sDana)}
+• App Pulsa: Rp ${fmtN(sApp)}
+• *TOTAL   : Rp ${fmtN(totalPenjualan)}*
 
 📉 *PENGELUARAN & PENDAPATAN*
-• Tarik Tunai : -Rp ${fmtN(data.sTarik)}
-• Admin       : Rp ${fmtN(data.totalAdmin)}
-• Aksesoris   : Rp ${fmtN(data.sAks)}
+• Tarik Tunai : -Rp ${fmtN(sTarik)}
+• Sisa Cash Penjualan : Rp ${fmtN(db.cash)}
+• Admin       : Rp ${fmtN(totalAdmin)}
+• Aksesoris   : Rp ${fmtN(sAks)}
 
-💰 *SISA CASH TOTAL : Rp ${fmtN(data.sisaCashSeluruhnya)}*
-${'─'.repeat(32)}
-${data.fTr.length > 0 ? `📋 *RINCIAN TRANSAKSI* (${data.fTr.length} transaksi)\n` +
-    data.fTr.map((t,i) => `${i+1}. ${t.nm||'-'} | ${t.kat} | Rp ${fmtN(t.nom)} | Adm: Rp ${fmtN(t.adm)}`).join('\n') + '\n' + '─'.repeat(32) + '\n'
-: ''}
+💰 *SISA CASH TOTAL : Rp ${fmtN(sisaCashTotal)}*
+(Sisa Cash Penjualan + Admin + Aksesoris)
+
+⚖️ *CEK SALDO BANK*
+• Saldo Bank Catatan : Rp ${fmtN(db.bank)}
+• Saldo Real Aplikasi : Rp ${fmtN(saldoRealTerakhir)}
+• ${db.bank !== saldoRealTerakhir ? 
+    `⚠️ Selisih: Rp ${fmtN(Math.abs(db.bank - saldoRealTerakhir))} (${db.bank > saldoRealTerakhir ? 'Lebih catatan' : 'Kurang catatan'})` : 
+    '✅ Sesuai'}
+
+${'─'.repeat(32)}`;
+
+    // Tambah history Saldo Real App
+    if (saldoRealHistory.length > 0) {
+        teks += `\n\n📋 *RIWAYAT SALDO REAL APP:*\n`;
+        saldoRealHistory.forEach((item, i) => {
+            teks += `${i+1}. ${item.jam} - Rp ${fmtN(item.nom)} ${item.ket ? '(' + item.ket + ')' : ''}\n`;
+        });
+    }
+
+    teks += `\n${'─'.repeat(32)}
 📄 Alfaza Cell App • ${new Date().toLocaleString('id-ID')}`;
 
     // Coba Web Share API (teks)
     if (navigator.share) {
         try {
             await navigator.share({
-                title: `Laporan Alfaza Cell - ${data.tgl}`,
+                title: `Laporan Alfaza Cell - ${tgl}`,
                 text: teks
             });
             gsToast('✅ Laporan berhasil dibagikan!');
@@ -1600,7 +1396,7 @@ function refresh() {
     document.getElementById('s-tarik').innerText = fmtN(db.tarik);
     document.getElementById('s-aks').innerText = fmtN(db.aks);
     document.getElementById('s-admin').innerText = fmtN(db.admin);
-    localStorage.setItem('alfaza_v14_4', JSON.stringify(mainDB));
+    localStorage.setItem('alfaza_v14_6', JSON.stringify(mainDB));
 }
 
 // ==================== RESET ====================
@@ -1611,17 +1407,9 @@ async function resetSaldo() {
             mainDB[k].bank = 0; mainDB[k].cash = 0;
             mainDB[k].tarik = 0; mainDB[k].aks = 0; mainDB[k].admin = 0;
         });
-        localStorage.setItem('alfaza_v14_4', JSON.stringify(mainDB));
+        localStorage.setItem('alfaza_v14_6', JSON.stringify(mainDB));
         refresh();
         await gsAlert('Saldo telah direset ke 0', '✅ Berhasil');
-    }
-}
-
-async function resetData() {
-    const ok = await gsConfirm('Hapus semua data transaksi? Tindakan ini tidak bisa dibatalkan!', '⚠️ Konfirmasi');
-    if(ok) {
-        localStorage.clear();
-        location.href = location.href;
     }
 }
 
