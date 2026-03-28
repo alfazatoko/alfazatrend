@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
-    <title>Alfaza Cell - Android</title>
+    <title>Alfaza Cell - Sistem Kasir Multi User</title>
+    <meta name="theme-color" content="#2b67f6">
+    <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
@@ -66,388 +69,304 @@
             margin: 0 auto 12px;
             box-shadow: 0 8px 20px rgba(43,103,246,0.35);
         }
-.login-logo i { font-size: 26px; color: white; }
-.login-box h2 { color: var(--primary); margin: 0 0 6px; font-size: 22px; font-weight: 800; }
-.login-box p { color: #999; font-size: 11px; margin-bottom: 20px; }
-.login-box select, .login-box input {
-    width: 100%; padding: 13px 14px; margin-bottom: 10px;
-    border-radius: 14px; border: 1.5px solid #e8ecf5;
-    outline: none; font-weight: 600; font-size: 14px;
-    background: #f8f9ff; color: var(--dark);
-    transition: border-color 0.2s;
-}
-.login-box select:focus, .login-box input:focus { border-color: var(--primary); }
-.btn-login {
-    background: linear-gradient(135deg, #2b67f6, #1a4fc4);
-    color: white; border: none; width: 100%;
-    padding: 14px; border-radius: 14px;
-    font-weight: bold; font-size: 15px;
-    cursor: pointer; margin-top: 6px;
-    box-shadow: 0 6px 20px rgba(43,103,246,0.35);
-    letter-spacing: 0.5px;
-}
-
-/* ===== HEADER ===== */
-.header {
-    position: sticky;
-    top: env(safe-area-inset-top);
-    z-index: 1000;
-    background: white;
-    padding: 9px 12px;
-    border-radius: 0 0 20px 20px;
-    box-shadow: 0 3px 15px rgba(43,103,246,0.10);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-    padding-top: max(9px, env(safe-area-inset-top));
-    border-bottom: 2px solid rgba(43,103,246,0.06);
-}
-.header-left { font-size: 9px; color: #888; }
-.header-left b { color: var(--primary); font-size: 10px; display: block; font-weight: 700; }
-.header-center { text-align: center; }
-.shop-name { color: var(--dark); font-size: 16px; font-weight: 800; display: block; line-height: 1.2; letter-spacing: -0.3px; }
-.shop-date { font-size: 8.5px; color: #aaa; display: block; margin-top: 1px; }
-.header-right { text-align: right; font-size: 9px; color: #888; }
-.header-right .absensi-label {
-    font-size: 8px; font-weight: 700; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px;
-}
-.header-right b { color: var(--orange); font-size: 11px; display: block; font-weight: 800; }
-.time-display { font-size: 10px; font-weight: 700; color: var(--dark); }
-
-/* ===== SALDO CARDS ===== */
-.saldo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
-.saldo-card {
-    padding: 12px 12px 12px 14px;
-    border-radius: 18px;
-    color: white;
-    min-height: 68px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    box-shadow: var(--card-shadow);
-    position: relative;
-    overflow: hidden;
-}
-.saldo-card::before {
-    content: '';
-    position: absolute;
-    top: -12px; right: -12px;
-    width: 60px; height: 60px;
-    background: rgba(255,255,255,0.12);
-    border-radius: 50%;
-}
-.saldo-card::after {
-    content: '';
-    position: absolute;
-    bottom: -18px; right: 14px;
-    width: 45px; height: 45px;
-    background: rgba(255,255,255,0.08);
-    border-radius: 50%;
-}
-.saldo-card-top { display: flex; justify-content: space-between; align-items: center; }
-.saldo-card-icon {
-    width: 28px; height: 28px;
-    background: rgba(255,255,255,0.2);
-    border-radius: 9px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 13px;
-}
-.saldo-card span { font-size: 9px; opacity: 0.88; font-weight: 500; }
-.saldo-card p { margin: 0; font-size: 14px; font-weight: 800; word-break: break-word; line-height: 1.2; letter-spacing: -0.3px; }
-.bg-blue { background: linear-gradient(145deg, #4a89dc, #2b67f6); }
-.bg-green { background: linear-gradient(145deg, #62af6d, #3d9149); }
-
-/* ===== STATS MINI ===== */
-.stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 12px; }
-.stat-card {
-    background: white;
-    padding: 9px 4px 8px;
-    border-radius: 14px;
-    text-align: center;
-    border: 1.5px solid #eef2ff;
-    box-shadow: 0 2px 8px rgba(43,103,246,0.06);
-    position: relative;
-    overflow: hidden;
-}
-.stat-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 3px;
-    border-radius: 14px 14px 0 0;
-}
-.stat-card.tarik-card::before { background: linear-gradient(90deg, #e74c3c, #ff7675); }
-.stat-card.aks-card::before { background: linear-gradient(90deg, #5d9cec, #74b9ff); }
-.stat-card.adm-card::before { background: linear-gradient(90deg, #f39c12, #fdcb6e); }
-.stat-card i { font-size: 12px; display: block; margin-bottom: 2px; }
-.stat-card span { font-size: 7.5px; color: #aaa; display: block; margin-bottom: 2px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
-.stat-card b { font-size: 12px; color: var(--dark); font-weight: 800; }
-
-/* ===== CATEGORY BUTTONS ===== */
-.category-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
-.category-btn {
-    background: white;
-    border: 1.5px solid #eef2ff;
-    padding: 9px 2px;
-    border-radius: 14px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 2px 8px rgba(43,103,246,0.05);
-}
-.category-btn:active { transform: scale(0.96); }
-.category-btn.active {
-    background: linear-gradient(135deg, #2b67f6, #1a4fc4);
-    color: white;
-    border-color: transparent;
-    box-shadow: 0 5px 15px rgba(43,103,246,0.35);
-}
-.category-btn i { display: block; font-size: 17px; margin-bottom: 3px; }
-.category-btn span { font-size: 9px; font-weight: 700; letter-spacing: 0.2px; }
-.category-btn:not(.active) i { color: var(--primary); }
-.category-btn:not(.active) span { color: #555; }
-/* ===== FORM CARD ===== */
-.form-card {
-    background: white;
-    padding: 12px;
-    border-radius: 18px;
-    box-shadow: 0 4px 15px rgba(43,103,246,0.08);
-    border: 1.5px solid #eef2ff;
-}
-.input-group {
-    display: flex;
-    align-items: center;
-    background: #f8f9ff;
-    border-radius: 12px;
-    padding: 10px 12px;
-    margin-bottom: 8px;
-    border: 1.5px solid #eef2ff;
-    transition: border-color 0.2s;
-}
-.input-group:focus-within { border-color: var(--primary); background: #f0f4ff; }
-.input-group i { color: #aab; font-size: 13px; margin-right: 8px; width: 16px; }
-.input-group input {
-    border: none; background: transparent; width: 100%;
-    outline: none; font-size: 13px; font-weight: 600; color: var(--dark);
-}
-.btn-save {
-    background: linear-gradient(135deg, #2b67f6, #1a4fc4);
-    color: white; border: none; width: 100%;
-    padding: 13px; border-radius: 14px;
-    font-weight: bold; font-size: 14px;
-    cursor: pointer; margin-top: 4px;
-    box-shadow: 0 5px 15px rgba(43,103,246,0.30);
-    letter-spacing: 0.5px;
-}
-.btn-save:active { transform: scale(0.98); }
-
-/* ===== PAGE ===== */
-.page { display: none; }
-.page.active { display: block; }
-
-/* ===== FILTER BUTTONS ===== */
-.filter-grid {
-    display: flex; flex-wrap: wrap;
-    gap: 4px; margin-bottom: 10px;
-}
-.filter-btn {
-    background: white;
-    border: 1.5px solid #dde4f5;
-    padding: 5px 10px;
-    border-radius: 20px;
-    font-size: 9px;
-    font-weight: 700;
-    cursor: pointer;
-    color: #777;
-    transition: all 0.2s;
-    white-space: nowrap;
-}
-.filter-btn.active {
-    background: linear-gradient(135deg, #2b67f6, #1a4fc4);
-    color: white;
-    border-color: transparent;
-    box-shadow: 0 3px 10px rgba(43,103,246,0.30);
-}
-
-/* ===== SECTION TITLE ===== */
-.section-title {
-    background: linear-gradient(135deg, #2c3e50, #34495e);
-    color: white;
-    padding: 7px 12px;
-    font-size: 10px;
-    font-weight: 700;
-    border-radius: 10px 10px 0 0;
-    margin-top: 12px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    letter-spacing: 0.3px;
-}
-.section-title i { font-size: 11px; opacity: 0.85; }
-
-/* ===== HISTORY TABLE ===== */
-.history-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    font-size: 8.5px;
-    margin-bottom: 6px;
-    border-radius: 0 0 10px 10px;
-    overflow: hidden;
-    table-layout: fixed;
-    box-shadow: 0 3px 10px rgba(43,103,246,0.07);
-}
-.history-table thead th {
-    background: linear-gradient(135deg, #f0f4ff, #e8eeff);
-    padding: 6px 3px;
-    text-align: left;
-    border-bottom: 2px solid #dde4f5;
-    font-size: 7.5px;
-    font-weight: 800;
-    color: var(--primary);
-    text-transform: uppercase;
-    letter-spacing: 0.3px;
-}
-.history-table td {
-    padding: 5px 3px;
-    border-bottom: 1px solid #f5f7ff;
-    word-break: break-word;
-    font-size: 8px;
-    line-height: 1.3;
-    color: #444;
-}
-.history-table tbody tr:nth-child(even) { background: #fafbff; }
-.history-table tbody tr:hover { background: #f0f4ff; }
-.history-table .no-col {
-    font-weight: 800; color: var(--primary); font-size: 7.5px;
-    background: #eef2ff; text-align: center;
-}
-.tr-bank { border-left: 3px solid #4a89dc !important; }
-.tr-flip { border-left: 3px solid #a29bfe !important; }
-.tr-dana { border-left: 3px solid #74b9ff !important; }
-.tr-app  { border-left: 3px solid #55efc4 !important; }
-.tr-tarik { border-left: 3px solid #e74c3c !important; }
-.tr-aks  { border-left: 3px solid #f39c12 !important; }
-.history-table tfoot td {
-    background: linear-gradient(135deg, #f8f9ff, #eef2ff);
-    font-weight: 800; color: var(--primary); font-size: 8px;
-    padding: 6px 4px; border-top: 2px solid #dde4f5;
-}
-
-/* ===== TOTAL BOX ===== */
-.total-box {
-    background: white;
-    border-radius: 14px;
-    padding: 10px 12px;
-    margin: 8px 0;
-    border: 1.5px solid #eef2ff;
-    box-shadow: 0 3px 10px rgba(43,103,246,0.07);
-}
-.total-row {
-    display: flex; justify-content: space-between;
-    padding: 5px 0;
-    border-bottom: 1px dashed #eef2ff;
-    font-size: 10.5px;
-}
-.total-row:last-child { border-bottom: none; }
-.total-label { font-weight: 600; color: #888; font-size: 10px; }
-.total-value { font-weight: 800; color: var(--dark); }
-
-/* ===== DATE + SEARCH ===== */
-.history-search-row {
-    display: flex; gap: 6px; margin-bottom: 10px;
-}
-.history-search-row input[type="date"],
-.history-search-row input[type="text"] {
-    flex: 1; padding: 9px 12px;
-    border-radius: 12px;
-    border: 1.5px solid #dde4f5;
-    font-size: 11px; font-weight: 600;
-    background: white; color: var(--dark);
-    outline: none;
-    box-shadow: 0 2px 6px rgba(43,103,246,0.06);
-}
-.history-search-row input:focus { border-color: var(--primary); }
-
-/* ===== NAVBAR ===== */
-.navbar {
-    position: fixed; bottom: 0; left: 0; right: 0;
-    background: white;
-    display: flex; justify-content: space-around;
-    padding: 4px 0;
-    border-top: none;
-    z-index: 1000;
-    box-shadow: 0 -4px 20px rgba(43,103,246,0.12);
-    padding-bottom: max(4px, env(safe-area-inset-bottom));
-}
-.nav-item {
-    text-align: center; color: #ccc; cursor: pointer;
-    flex: 1; border: none; background: none;
-    font-size: 8.5px; padding: 4px 0;
-    transition: all 0.2s; font-weight: 600;
-    position: relative;
-}
-.nav-item.active { color: var(--primary); }
-.nav-item.active::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 50%;
-    transform: translateX(-50%);
-    width: 30px; height: 3px;
-    background: var(--primary);
-    border-radius: 0 0 4px 4px;
-}
-.nav-item i { font-size: 18px; display: block; margin-bottom: 1px; }
-.nav-item:active { transform: scale(0.92); }
-        /* ===== MODAL ===== */
-        .modal {
-            display: none; position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.45);
-            z-index: 9999; align-items: center; justify-content: center;
-            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+        .login-logo i { font-size: 26px; color: white; }
+        .login-box h2 { color: var(--primary); margin: 0 0 6px; font-size: 22px; font-weight: 800; }
+        .login-box p { color: #999; font-size: 11px; margin-bottom: 20px; }
+        .login-box select, .login-box input {
+            width: 100%; padding: 13px 14px; margin-bottom: 10px;
+            border-radius: 14px; border: 1.5px solid #e8ecf5;
+            outline: none; font-weight: 600; font-size: 14px;
+            background: #f8f9ff; color: var(--dark);
+            transition: border-color 0.2s;
         }
-        .modal-content {
-            background: white; width: 270px;
-            border-radius: 22px; padding: 20px 18px;
+        .login-box select:focus, .login-box input:focus { border-color: var(--primary); }
+        .btn-login {
+            background: linear-gradient(135deg, #2b67f6, #1a4fc4);
+            color: white; border: none; width: 100%;
+            padding: 14px; border-radius: 14px;
+            font-weight: bold; font-size: 15px;
+            cursor: pointer; margin-top: 6px;
+            box-shadow: 0 6px 20px rgba(43,103,246,0.35);
+            letter-spacing: 0.5px;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            position: sticky;
+            top: env(safe-area-inset-top);
+            z-index: 1000;
+            background: white;
+            padding: 9px 12px;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 3px 15px rgba(43,103,246,0.10);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-top: max(9px, env(safe-area-inset-top));
+            border-bottom: 2px solid rgba(43,103,246,0.06);
+        }
+        .header-left { font-size: 9px; color: #888; }
+        .header-left b { color: var(--primary); font-size: 10px; display: block; font-weight: 700; }
+        .header-center { text-align: center; }
+        .shop-name { color: var(--dark); font-size: 16px; font-weight: 800; display: block; line-height: 1.2; letter-spacing: -0.3px; }
+        .shop-date { font-size: 8.5px; color: #aaa; display: block; margin-top: 1px; }
+        .header-right { text-align: right; font-size: 9px; color: #888; }
+        .header-right .absensi-label {
+            font-size: 8px; font-weight: 700; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .header-right b { color: var(--orange); font-size: 11px; display: block; font-weight: 800; }
+        .time-display { font-size: 10px; font-weight: 700; color: var(--dark); }
+
+        /* ===== SALDO CARDS ===== */
+        .saldo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+        .saldo-card {
+            padding: 12px 12px 12px 14px;
+            border-radius: 18px;
+            color: white;
+            min-height: 68px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        .saldo-card::before {
+            content: '';
+            position: absolute;
+            top: -12px; right: -12px;
+            width: 60px; height: 60px;
+            background: rgba(255,255,255,0.12);
+            border-radius: 50%;
+        }
+        .saldo-card::after {
+            content: '';
+            position: absolute;
+            bottom: -18px; right: 14px;
+            width: 45px; height: 45px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+        }
+        .saldo-card-top { display: flex; justify-content: space-between; align-items: center; }
+        .saldo-card-icon {
+            width: 28px; height: 28px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 9px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px;
+        }
+        .saldo-card span { font-size: 9px; opacity: 0.88; font-weight: 500; }
+        .saldo-card p { margin: 0; font-size: 14px; font-weight: 800; word-break: break-word; line-height: 1.2; letter-spacing: -0.3px; }
+        .bg-blue { background: linear-gradient(145deg, #4a89dc, #2b67f6); }
+        .bg-green { background: linear-gradient(145deg, #62af6d, #3d9149); }
+
+        /* ===== STATS MINI ===== */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 12px; }
+        .stat-card {
+            background: white;
+            padding: 9px 4px 8px;
+            border-radius: 14px;
             text-align: center;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.20);
+            border: 1.5px solid #eef2ff;
+            box-shadow: 0 2px 8px rgba(43,103,246,0.06);
+            position: relative;
+            overflow: hidden;
         }
-        .modal-content.wide { width: 285px; }
-        .modal-title {
-            color: var(--primary); font-size: 15px;
-            font-weight: 800; margin-bottom: 14px;
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            border-radius: 14px 14px 0 0;
         }
-        .modal-btn {
-            width: 100%; padding: 11px; margin-bottom: 8px;
-            border: none; border-radius: 13px;
-            font-weight: bold; font-size: 13px;
-            cursor: pointer; display: flex;
-            align-items: center; justify-content: center; gap: 6px;
-            transition: all 0.2s;
-        }
-        .modal-btn:active { transform: scale(0.97); }
-        .modal-btn.blue { background: linear-gradient(135deg, #5d9cec, #4a89dc); color: white; box-shadow: 0 4px 12px rgba(74,137,220,0.35); }
-        .modal-btn.green { background: linear-gradient(135deg, #7cc386, #62af6d); color: white; box-shadow: 0 4px 12px rgba(98,175,109,0.35); }
-        .modal-btn.gray { background: #f0f2f8; color: #777; }
-        .modal-input {
-            width: 100%; padding: 11px; font-size: 15px;
-            border: 2px solid var(--primary); border-radius: 13px;
-            margin: 6px 0 14px; text-align: center; font-weight: 700;
-            color: var(--dark); outline: none;
-        }
-        .modal-button-group { display: flex; gap: 8px; }
-        .modal-button {
-            flex: 1; padding: 10px; border: none;
-            border-radius: 12px; font-weight: bold;
-            font-size: 13px; cursor: pointer; transition: all 0.2s;
-        }
-        .modal-button:active { transform: scale(0.96); }
-        .modal-button.red { background: var(--red); color: white; box-shadow: 0 4px 12px rgba(231,76,60,0.3); }
-        .modal-button.green { background: var(--green); color: white; box-shadow: 0 4px 12px rgba(98,175,109,0.3); }
+        .stat-card.tarik-card::before { background: linear-gradient(90deg, #e74c3c, #ff7675); }
+        .stat-card.aks-card::before { background: linear-gradient(90deg, #5d9cec, #74b9ff); }
+        .stat-card.adm-card::before { background: linear-gradient(90deg, #f39c12, #fdcb6e); }
+        .stat-card i { font-size: 12px; display: block; margin-bottom: 2px; }
+        .stat-card span { font-size: 7.5px; color: #aaa; display: block; margin-bottom: 2px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
+        .stat-card b { font-size: 12px; color: var(--dark); font-weight: 800; }
 
-        /* ===== REPORT ===== */
+        /* ===== CATEGORY BUTTONS ===== */
+        .category-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
+        .category-btn {
+            background: white;
+            border: 1.5px solid #eef2ff;
+            padding: 9px 2px;
+            border-radius: 14px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(43,103,246,0.05);
+        }
+        .category-btn:active { transform: scale(0.96); }
+        .category-btn.active {
+            background: linear-gradient(135deg, #2b67f6, #1a4fc4);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 5px 15px rgba(43,103,246,0.35);
+        }
+        .category-btn i { display: block; font-size: 17px; margin-bottom: 3px; }
+        .category-btn span { font-size: 9px; font-weight: 700; letter-spacing: 0.2px; }
+        .category-btn:not(.active) i { color: var(--primary); }
+        .category-btn:not(.active) span { color: #555; }
+        
+        /* ===== FORM CARD ===== */
+        .form-card {
+            background: white;
+            padding: 12px;
+            border-radius: 18px;
+            box-shadow: 0 4px 15px rgba(43,103,246,0.08);
+            border: 1.5px solid #eef2ff;
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            background: #f8f9ff;
+            border-radius: 12px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            border: 1.5px solid #eef2ff;
+            transition: border-color 0.2s;
+        }
+        .input-group:focus-within { border-color: var(--primary); background: #f0f4ff; }
+        .input-group i { color: #aab; font-size: 13px; margin-right: 8px; width: 16px; }
+        .input-group input {
+            border: none; background: transparent; width: 100%;
+            outline: none; font-size: 13px; font-weight: 600; color: var(--dark);
+        }
+        .btn-save {
+            background: linear-gradient(135deg, #2b67f6, #1a4fc4);
+            color: white; border: none; width: 100%;
+            padding: 13px; border-radius: 14px;
+            font-weight: bold; font-size: 14px;
+            cursor: pointer; margin-top: 4px;
+            box-shadow: 0 5px 15px rgba(43,103,246,0.30);
+            letter-spacing: 0.5px;
+        }
+        .btn-save:active { transform: scale(0.98); }
+
+        /* ===== PAGE ===== */
+        .page { display: none; }
+        .page.active { display: block; }
+
+        /* ===== FILTER BUTTONS ===== */
+        .filter-grid {
+            display: flex; flex-wrap: wrap;
+            gap: 4px; margin-bottom: 10px;
+        }
+        .filter-btn {
+            background: white;
+            border: 1.5px solid #dde4f5;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 9px;
+            font-weight: 700;
+            cursor: pointer;
+            color: #777;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .filter-btn.active {
+            background: linear-gradient(135deg, #2b67f6, #1a4fc4);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 3px 10px rgba(43,103,246,0.30);
+        }
+
+        /* ===== DATE RANGE FILTER ===== */
+        .date-range-row {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .date-range-row input[type="date"] {
+            flex: 1;
+            padding: 9px 8px;
+            border-radius: 12px;
+            border: 1.5px solid #dde4f5;
+            font-size: 10px;
+            font-weight: 600;
+            background: white;
+            color: var(--dark);
+            outline: none;
+        }
+        .date-range-row button {
+            padding: 9px 12px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #2b67f6, #1a4fc4);
+            color: white;
+            font-weight: 700;
+            font-size: 10px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .date-range-row button:active { transform: scale(0.96); }
+
+        /* ===== SECTION TITLE ===== */
+        .section-title {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 7px 12px;
+            font-size: 10px;
+            font-weight: 700;
+            border-radius: 10px 10px 0 0;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            letter-spacing: 0.3px;
+        }
+        .section-title i { font-size: 11px; opacity: 0.85; }
+
+        /* ===== HISTORY TABLE ===== */
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            font-size: 8.5px;
+            margin-bottom: 6px;
+            border-radius: 0 0 10px 10px;
+            overflow: hidden;
+            table-layout: fixed;
+            box-shadow: 0 3px 10px rgba(43,103,246,0.07);
+        }
+        .history-table thead th {
+            background: linear-gradient(135deg, #f0f4ff, #e8eeff);
+            padding: 6px 3px;
+            text-align: left;
+            border-bottom: 2px solid #dde4f5;
+            font-size: 7.5px;
+            font-weight: 800;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .history-table td {
+            padding: 5px 3px;
+            border-bottom: 1px solid #f5f7ff;
+            word-break: break-word;
+            font-size: 8px;
+            line-height: 1.3;
+            color: #444;
+        }
+        .history-table tbody tr:nth-child(even) { background: #fafbff; }
+        .history-table tbody tr:hover { background: #f0f4ff; }
+        .history-table .no-col {
+            font-weight: 800; color: var(--primary); font-size: 7.5px;
+            background: #eef2ff; text-align: center;
+        }
+        .tr-bank { border-left: 3px solid #4a89dc !important; }
+        .tr-flip { border-left: 3px solid #a29bfe !important; }
+        .tr-dana { border-left: 3px solid #74b9ff !important; }
+        .tr-app  { border-left: 3px solid #55efc4 !important; }
+        .tr-tarik { border-left: 3px solid #e74c3c !important; }
+        .tr-aks  { border-left: 3px solid #f39c12 !important; }
+
+        /* ===== REPORT CARD ===== */
         .report-card {
             background: white;
             border-radius: 18px;
@@ -463,7 +382,6 @@
             border-bottom: 1px solid #f5f7ff;
             font-size: 11px;
         }
-        .report-row:last-child { border-bottom: none; }
         .report-total-section {
             background: linear-gradient(135deg, #2b67f6, #1a4fc4);
             color: white;
@@ -471,100 +389,169 @@
             padding: 14px;
             border-radius: 0 0 16px 16px;
         }
-        .report-total-row {
+        .action-buttons {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 5px;
-        }
-        .report-total-label { font-size: 11px; font-weight: 700; }
-        .report-total-value { font-size: 16px; font-weight: 800; }
-        .report-footer { font-size: 8px; color: rgba(255,255,255,0.75); margin-top: 5px; text-align: center; }
-        
-        /* Style untuk history saldo real */
-        .history-saldo-real {
-            background: #f8f9ff;
-            border-radius: 12px;
-            padding: 8px;
+            gap: 6px;
             margin-top: 10px;
-            border: 1.5px solid #dde4f5;
+            margin-bottom: 10px;
         }
-        .history-saldo-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 6px 4px;
-            border-bottom: 1px dashed #dde4f5;
-            font-size: 10px;
-        }
-        .history-saldo-item:last-child {
-            border-bottom: none;
-        }
-        .history-saldo-time {
-            color: #888;
-            font-size: 9px;
-        }
-        .history-saldo-nominal {
-            font-weight: 700;
-            color: var(--primary);
-        }
-        .history-saldo-ket {
-            font-size: 9px;
-            color: #666;
-            font-style: italic;
-        }
-
-        /* Style untuk baris perbandingan saldo */
-        .comparison-row {
-            background: #f0f4ff;
-            border-radius: 8px;
-            padding: 8px 6px;
-            margin-top: 8px;
-            border-left: 3px solid var(--primary);
-        }
-        .comparison-item {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            padding: 3px 0;
-        }
-        .comparison-label { font-weight: 600; color: var(--dark); }
-        .comparison-value { font-weight: 800; color: var(--primary); }
-        .comparison-diff {
-            font-size: 10px;
-            color: var(--red);
-            font-weight: 700;
-            text-align: right;
-            margin-top: 4px;
-            padding-top: 4px;
-            border-top: 1px dashed #ccc;
-        }
-
-        /* ===== ACTION BUTTONS ===== */
-        .action-buttons { display: flex; gap: 6px; margin-top: 10px; }
         .action-btn {
-            flex: 1; padding: 10px 4px;
-            border: none; border-radius: 13px;
-            font-weight: bold; font-size: 10.5px;
-            cursor: pointer; display: flex;
-            align-items: center; justify-content: center; gap: 4px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            flex: 1;
+            padding: 10px 4px;
+            border: none;
+            border-radius: 13px;
+            font-weight: bold;
+            font-size: 10.5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
             transition: all 0.2s;
         }
         .action-btn:active { transform: scale(0.96); }
         .btn-orange { background: linear-gradient(135deg, #f39c12, #e67e22); color: white; }
-        .btn-green  { background: linear-gradient(135deg, #25d366, #128c7e); color: white; }
-        .btn-blue   { background: linear-gradient(135deg, #2b67f6, #1a4fc4); color: white; }
+        .btn-green { background: linear-gradient(135deg, #25d366, #128c7e); color: white; }
+        .btn-blue { background: linear-gradient(135deg, #2b67f6, #1a4fc4); color: white; }
 
-        /* ===== EMPTY STATE ===== */
+        /* ===== CHART CONTAINER ===== */
+        .chart-container {
+            background: white;
+            border-radius: 18px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1.5px solid #eef2ff;
+        }
+        .chart-container canvas {
+            max-height: 200px;
+            width: 100%;
+        }
+        .owner-dashboard {
+            background: white;
+            border-radius: 18px;
+            padding: 12px;
+            border: 1.5px solid #eef2ff;
+        }
+        .kasir-selector-grid {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+        .kasir-selector-btn {
+            flex: 1;
+            padding: 10px 5px;
+            border: 1.5px solid #eef2ff;
+            border-radius: 14px;
+            background: white;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 11px;
+            transition: all 0.2s;
+        }
+        .kasir-selector-btn.active {
+            background: linear-gradient(135deg, #2b67f6, #1a4fc4);
+            color: white;
+            border-color: transparent;
+        }
+        .kasir-selector-btn:active { transform: scale(0.96); }
         .empty-state {
             text-align: center; padding: 18px 10px; color: #bbb;
             font-size: 10px;
         }
         .empty-state i { font-size: 24px; display: block; margin-bottom: 5px; opacity: 0.4; }
+        
+        .owner-badge {
+            background: var(--orange);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 8px;
+            font-weight: bold;
+            margin-left: 6px;
+        }
+        
+        .navbar {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: white;
+            display: flex; justify-content: space-around;
+            padding: 4px 0;
+            border-top: none;
+            z-index: 1000;
+            box-shadow: 0 -4px 20px rgba(43,103,246,0.12);
+            padding-bottom: max(4px, env(safe-area-inset-bottom));
+        }
+        .nav-item {
+            text-align: center; color: #ccc; cursor: pointer;
+            flex: 1; border: none; background: none;
+            font-size: 8.5px; padding: 4px 0;
+            transition: all 0.2s; font-weight: 600;
+            position: relative;
+        }
+        .nav-item.active { color: var(--primary); }
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 30px; height: 3px;
+            background: var(--primary);
+            border-radius: 0 0 4px 4px;
+        }
+        .nav-item i { font-size: 18px; display: block; margin-bottom: 1px; }
+        
+        .modal {
+            display: none; position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.45);
+            z-index: 9999; align-items: center; justify-content: center;
+        }
+        .modal-content {
+            background: white; width: 270px;
+            border-radius: 22px; padding: 20px 18px;
+            text-align: center;
+        }
+        .modal-content.wide { width: 285px; }
+        .modal-title { color: var(--primary); font-size: 15px; font-weight: 800; margin-bottom: 14px; }
+        .modal-btn {
+            width: 100%; padding: 11px; margin-bottom: 8px;
+            border: none; border-radius: 13px;
+            font-weight: bold; font-size: 13px;
+            cursor: pointer;
+        }
+        .modal-btn.blue { background: linear-gradient(135deg, #5d9cec, #4a89dc); color: white; }
+        .modal-btn.green { background: linear-gradient(135deg, #7cc386, #62af6d); color: white; }
+        .modal-btn.gray { background: #f0f2f8; color: #777; }
+        .modal-input {
+            width: 100%; padding: 11px; font-size: 15px;
+            border: 2px solid var(--primary); border-radius: 13px;
+            margin: 6px 0 14px; text-align: center;
+            outline: none;
+        }
+        .modal-button-group { display: flex; gap: 8px; }
+        .modal-button { flex: 1; padding: 10px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; }
+        .modal-button.red { background: var(--red); color: white; }
+        .modal-button.green { background: var(--green); color: white; }
+
+        .history-saldo-real {
+            margin-top: 12px;
+            padding: 10px;
+            background: #f8f9ff;
+            border-radius: 12px;
+            border: 1px solid #eef2ff;
+        }
+
+        .sync-status {
+            display: inline-block;
+            margin-top: 2px;
+            font-size: 8px;
+            font-weight: 700;
+            color: #3d9149;
+        }
     </style>
 </head>
 <body>
-<!-- ==================== LOGIN PAGE ==================== -->
 <div id="page-login">
     <div class="login-box">
         <div class="login-logo"><i class="fa-solid fa-store"></i></div>
@@ -573,18 +560,19 @@
         <select id="l-user">
             <option value="KASIR 01">👤 KASIR 01</option>
             <option value="KASIR 02">👤 KASIR 02</option>
+            <option value="KASIR 03">👤 KASIR 03</option>
+            <option value="OWNER">👑 OWNER</option>
         </select>
         <input type="password" id="l-pin" placeholder="🔒 Masukkan PIN" inputmode="numeric">
         <button class="btn-login" onclick="prosesLogin()"><i class="fa-solid fa-right-to-bracket"></i> MASUK</button>
     </div>
 </div>
 
-<!-- ==================== MAIN APP ==================== -->
 <div id="main-app" style="display:none">
-    <!-- HEADER -->
     <div class="header">
         <div class="header-left">
             Kasir: <b id="disp-user">-</b>
+            <span id="owner-badge" style="display:none" class="owner-badge">OWNER</span>
             Shift: <b id="disp-shift">-</b>
         </div>
         <div class="header-center">
@@ -595,97 +583,54 @@
             <div class="absensi-label">ABSENSI</div>
             <b id="disp-login">--:--</b>
             <span class="time-display" id="disp-jam-jalan">00:00</span>
+            <span class="sync-status" id="sync-status">Cloud: belum</span>
         </div>
     </div>
 
     <div class="container">
-
-        <!-- ===== HOME PAGE ===== -->
         <div id="page-home" class="page active">
-            <!-- Saldo Cards -->
             <div class="saldo-grid">
-                <div class="saldo-card bg-blue">
-                    <div class="saldo-card-top">
-                        <span>Saldo Bank</span>
-                        <div class="saldo-card-icon"><i class="fa-solid fa-university"></i></div>
-                    </div>
-                    <p id="s-bank">Rp 0</p>
-                </div>
-                <div class="saldo-card bg-green">
-                    <div class="saldo-card-top">
-                        <span>Saldo Cash Penjualan</span>
-                        <div class="saldo-card-icon"><i class="fa-solid fa-money-bill-wave"></i></div>
-                    </div>
-                    <p id="s-cash">Rp 0</p>
-                </div>
+                <div class="saldo-card bg-blue"><div class="saldo-card-top"><span>Saldo Bank</span><div class="saldo-card-icon"><i class="fa-solid fa-university"></i></div></div><p id="s-bank">Rp 0</p></div>
+                <div class="saldo-card bg-green"><div class="saldo-card-top"><span>Saldo Cash Penjualan</span><div class="saldo-card-icon"><i class="fa-solid fa-money-bill-wave"></i></div></div><p id="s-cash">Rp 0</p></div>
             </div>
-
-            <!-- Stats Mini -->
             <div class="stats-grid">
-                <div class="stat-card tarik-card">
-                    <i class="fa-solid fa-arrow-up-from-bracket" style="color:#e74c3c"></i>
-                    <span>Tarik</span><b id="s-tarik">0</b>
-                </div>
-                <div class="stat-card aks-card">
-                    <i class="fa-solid fa-headset" style="color:#5d9cec"></i>
-                    <span>Aksesoris</span><b id="s-aks">0</b>
-                </div>
-                <div class="stat-card adm-card">
-                    <i class="fa-solid fa-coins" style="color:var(--orange)"></i>
-                    <span>Admin</span><b id="s-admin" style="color:var(--orange)">0</b>
-                </div>
+                <div class="stat-card tarik-card"><i class="fa-solid fa-arrow-up-from-bracket" style="color:#e74c3c"></i><span>Tarik</span><b id="s-tarik">0</b></div>
+                <div class="stat-card aks-card"><i class="fa-solid fa-headset" style="color:#5d9cec"></i><span>Aksesoris</span><b id="s-aks">0</b></div>
+                <div class="stat-card adm-card"><i class="fa-solid fa-coins" style="color:var(--orange)"></i><span>Admin</span><b id="s-admin" style="color:var(--orange)">0</b></div>
             </div>
-
-            <!-- Category Buttons -->
             <div class="category-grid">
-                <div class="category-btn active" onclick="pilihKat('BANK', this)">
-                    <i class="fa-solid fa-building-columns"></i><span>Bank</span>
-                </div>
-                <div class="category-btn" onclick="pilihKat('FLIP', this)">
-                    <i class="fa-solid fa-shuffle"></i><span>Flip</span>
-                </div>
-                <div class="category-btn" onclick="pilihKat('APP PULSA', this)">
-                    <i class="fa-solid fa-mobile-screen-button"></i><span>App</span>
-                </div>
-                <div class="category-btn" onclick="pilihKat('DANA', this)">
-                    <i class="fa-solid fa-wallet"></i><span>Dana</span>
-                </div>
-                <div class="category-btn" onclick="pilihKat('TARIK TUNAI', this)">
-                    <i class="fa-solid fa-hand-holding-dollar"></i><span>Tarik</span>
-                </div>
-                <div class="category-btn" onclick="pilihKat('AKSESORIS', this)">
-                    <i class="fa-solid fa-headset"></i><span>Aks</span>
-                </div>
+                <div class="category-btn active" onclick="pilihKat('BANK', this)"><i class="fa-solid fa-building-columns"></i><span>Bank</span></div>
+                <div class="category-btn" onclick="pilihKat('FLIP', this)"><i class="fa-solid fa-shuffle"></i><span>Flip</span></div>
+                <div class="category-btn" onclick="pilihKat('APP PULSA', this)"><i class="fa-solid fa-mobile-screen-button"></i><span>App</span></div>
+                <div class="category-btn" onclick="pilihKat('DANA', this)"><i class="fa-solid fa-wallet"></i><span>Dana</span></div>
+                <div class="category-btn" onclick="pilihKat('TARIK TUNAI', this)"><i class="fa-solid fa-hand-holding-dollar"></i><span>Tarik</span></div>
+                <div class="category-btn" onclick="pilihKat('AKSESORIS', this)"><i class="fa-solid fa-headset"></i><span>Aks</span></div>
             </div>
-            <!-- Form -->
             <div class="form-card">
-                <div class="input-group">
-                    <i class="fa-solid fa-money-bill"></i>
-                    <input type="text" id="t-nom" placeholder="Nominal" inputmode="numeric" onkeyup="fmt(this)">
-                </div>
-                <div class="input-group">
-                    <i class="fa-solid fa-percent"></i>
-                    <input type="text" id="t-adm" placeholder="Admin" inputmode="numeric" onkeyup="fmt(this)">
-                </div>
-                <div class="input-group">
-                    <i class="fa-solid fa-pen-to-square"></i>
-                    <input type="text" id="t-ket" placeholder="Keterangan (opsional)">
-                </div>
-                <button class="btn-save" onclick="simpanTr()">
-                    <i class="fa-solid fa-floppy-disk"></i> SIMPAN TRANSAKSI
-                </button>
+                <div class="input-group"><i class="fa-solid fa-money-bill"></i><input type="text" id="t-nom" placeholder="Nominal" inputmode="numeric" onkeyup="fmt(this)"></div>
+                <div class="input-group"><i class="fa-solid fa-percent"></i><input type="text" id="t-adm" placeholder="Admin" inputmode="numeric" onkeyup="fmt(this)"></div>
+                <div class="input-group"><i class="fa-solid fa-pen-to-square"></i><input type="text" id="t-ket" placeholder="Keterangan (opsional)"></div>
+                <button class="btn-save" onclick="simpanTr()"><i class="fa-solid fa-floppy-disk"></i> SIMPAN TRANSAKSI</button>
             </div>
         </div>
 
-        <!-- ===== HISTORY PAGE ===== -->
         <div id="page-history" class="page">
-            <!-- Search & Date -->
-            <div class="history-search-row">
-                <input type="date" id="f-tgl" onchange="filterRiwayat()">
-                <input type="text" id="f-cari" placeholder="🔍 Cari..." onkeyup="filterRiwayat()">
+            <div id="owner-kasir-selector" style="display:none" class="kasir-selector">
+                <select id="owner-kasir-filter" onchange="filterRiwayat()">
+                    <option value="all">📊 SEMUA KASIR</option>
+                    <option value="KASIR 01">👤 KASIR 01</option>
+                    <option value="KASIR 02">👤 KASIR 02</option>
+                    <option value="KASIR 03">👤 KASIR 03</option>
+                </select>
             </div>
-
-            <!-- Filter Transaksi -->
+            <div class="date-range-row">
+                <input type="date" id="filter-tgl-awal" placeholder="Dari">
+                <input type="date" id="filter-tgl-akhir" placeholder="Sampai">
+                <button onclick="filterRiwayat()"><i class="fa-solid fa-calendar-range"></i> Terapkan</button>
+            </div>
+            <div class="history-search-row">
+                <input type="text" id="f-cari" placeholder="🔍 Cari transaksi..." onkeyup="filterRiwayat()">
+            </div>
             <div class="filter-grid" id="filter-transaksi">
                 <div class="filter-btn active" data-filter="all" onclick="filterKategori('all', this)">Semua</div>
                 <div class="filter-btn" data-filter="BANK" onclick="filterKategori('BANK', this)">🏦 Bank</div>
@@ -695,265 +640,402 @@
                 <div class="filter-btn" data-filter="TARIK TUNAI" onclick="filterKategori('TARIK TUNAI', this)">💵 Tarik</div>
                 <div class="filter-btn" data-filter="AKSESORIS" onclick="filterKategori('AKSESORIS', this)">🎧 Aks</div>
             </div>
-
-            <!-- Tabel Transaksi -->
-            <div class="section-title">
-                <i class="fa-solid fa-receipt"></i> RIWAYAT TRANSAKSI
-            </div>
-            <table class="history-table">
-                <thead>
-                    <tr>
-                        <th style="width:8%; text-align:center;">#</th>
-                        <th style="width:14%">Jam</th>
-                        <th style="width:14%">Tipe</th>
-                        <th style="width:24%">Nominal</th>
-                        <th style="width:18%">Adm</th>
-                        <th style="width:22%">Ket</th>
-                    </tr>
-                </thead>
-                <tbody id="list-riwayat"></tbody>
-            </table>
-
-            <!-- Filter Tambah Saldo -->
-            <div class="section-title" style="margin-top:10px">
-                <i class="fa-solid fa-circle-plus"></i> RIWAYAT TAMBAH SALDO
-            </div>
-            <div class="filter-grid" id="filter-tambahsaldo" style="margin-top:8px">
+            <div class="section-title"><i class="fa-solid fa-receipt"></i> RIWAYAT TRANSAKSI</div>
+            <table class="history-table"><thead><tr><th style="width:6%">#</th><th style="width:10%">Tgl</th><th style="width:10%">Jam</th><th style="width:12%">Tipe</th><th style="width:20%">Nominal</th><th style="width:15%">Adm</th><th style="width:27%">Ket</th></tr></thead><tbody id="list-riwayat"></tbody></table>
+            <div class="section-title" style="margin-top:10px"><i class="fa-solid fa-circle-plus"></i> RIWAYAT TAMBAH SALDO</div>
+            <div class="filter-grid" id="filter-tambahsaldo">
                 <div class="filter-btn active" data-filter-ts="all" onclick="filterTambahSaldo('all', this)">Semua</div>
                 <div class="filter-btn" data-filter-ts="Bank" onclick="filterTambahSaldo('Bank', this)">🏦 Bank</div>
                 <div class="filter-btn" data-filter-ts="Cash" onclick="filterTambahSaldo('Cash', this)">💵 Cash</div>
                 <div class="filter-btn" data-filter-ts="Saldo Real App" onclick="filterTambahSaldo('Saldo Real App', this)">📊 Saldo Real</div>
             </div>
-            <table class="history-table">
-                <thead>
-                    <tr>
-                        <th style="width:8%; text-align:center;">#</th>
-                        <th style="width:20%">Jam</th>
-                        <th style="width:25%">Jenis</th>
-                        <th style="width:27%">Nominal</th>
-                        <th style="width:20%">Ket</th>
-                    </tr>
-                </thead>
-                <tbody id="list-tambah-saldo"></tbody>
-            </table>
+            <table class="history-table"><thead><tr><th style="width:8%">#</th><th style="width:18%">Tgl</th><th style="width:18%">Jam</th><th style="width:28%">Jenis</th><th style="width:28%">Nominal</th></tr></thead><tbody id="list-tambah-saldo"></tbody></table>
         </div>
 
-        <!-- ===== REPORT PAGE ===== -->
         <div id="page-report" class="page">
+            <div class="date-range-row">
+                <input type="date" id="report-tgl-awal">
+                <input type="date" id="report-tgl-akhir">
+                <button onclick="hitungLaporanRange()"><i class="fa-solid fa-calendar-range"></i> Tampilkan</button>
+            </div>
             <div id="rep-area"></div>
         </div>
 
-    </div><!-- end .container -->
+        <div id="page-owner" class="page">
+            <div class="owner-dashboard">
+                <h3 style="font-size:14px; margin-bottom:12px; text-align:center;">📊 DASHBOARD OWNER</h3>
+                <div class="kasir-selector-grid">
+                    <div class="kasir-selector-btn" data-kasir="KASIR 01" onclick="pilihKasirOwner('KASIR 01', this)">👤 KASIR 01</div>
+                    <div class="kasir-selector-btn" data-kasir="KASIR 02" onclick="pilihKasirOwner('KASIR 02', this)">👤 KASIR 02</div>
+                    <div class="kasir-selector-btn" data-kasir="KASIR 03" onclick="pilihKasirOwner('KASIR 03', this)">👤 KASIR 03</div>
+                </div>
+                <div class="chart-container" style="margin-bottom:15px;">
+                    <div style="font-size:11px; font-weight:700; margin-bottom:8px;">📈 GRAFIK PENJUALAN (7 Hari Terakhir)</div>
+                    <canvas id="salesChart" style="max-height:180px; width:100%"></canvas>
+                </div>
+                <div id="owner-pembukuan-detail"></div>
+            </div>
+        </div>
+    </div>
 
-    <!-- NAVBAR -->
     <div class="navbar">
-        <button class="nav-item active" onclick="bukaPage('home', this)">
-            <i class="fa-solid fa-house"></i>Beranda
-        </button>
-        <button class="nav-item" onclick="bukaPage('history', this)">
-            <i class="fa-solid fa-clock-rotate-left"></i>Riwayat
-        </button>
-        <button class="nav-item" onclick="bukaMenuSaldo()" style="color:var(--green)">
-            <i class="fa-solid fa-circle-plus"></i>+Saldo
-        </button>
-        <button class="nav-item" onclick="bukaPage('report', this)">
-            <i class="fa-solid fa-chart-pie"></i>Laporan
-        </button>
-        <button class="nav-item" onclick="logout()" style="color:var(--red)">
-            <i class="fa-solid fa-right-from-bracket"></i>Keluar
-        </button>
+        <button class="nav-item active" onclick="bukaPage('home', this)"><i class="fa-solid fa-house"></i>Beranda</button>
+        <button class="nav-item" onclick="bukaPage('history', this)"><i class="fa-solid fa-clock-rotate-left"></i>Riwayat</button>
+        <button class="nav-item" onclick="bukaMenuSaldo()" style="color:var(--green)"><i class="fa-solid fa-circle-plus"></i>+Saldo</button>
+        <button class="nav-item" onclick="bukaPage('report', this)"><i class="fa-solid fa-chart-pie"></i>Laporan</button>
+        <button class="nav-item" id="owner-nav-btn" style="display:none" onclick="bukaPage('owner', this)"><i class="fa-solid fa-chart-line"></i>Owner</button>
+        <button class="nav-item" onclick="logout()" style="color:var(--red)"><i class="fa-solid fa-right-from-bracket"></i>Keluar</button>
     </div>
 </div>
-<!-- ===== MODAL SALDO ===== -->
+
 <div id="modalPilihSaldo" class="modal" style="display:none;">
-    <div class="modal-content">
-        <div class="modal-title">💳 Pilih Jenis Saldo</div>
-        <button class="modal-btn blue" onclick="pilihJenisSaldo('Bank')">
-            <i class="fa-solid fa-building-columns"></i> Tambah Bank
-        </button>
-        <button class="modal-btn green" onclick="pilihJenisSaldo('Cash')">
-            <i class="fa-solid fa-money-bill-wave"></i> Tambah Cash
-        </button>
-        <button class="modal-btn gray" onclick="tutupModalPilihSaldo()">
-            <i class="fa-solid fa-xmark"></i> Batal
-        </button>
+    <div class="modal-content"><div class="modal-title">💳 Pilih Jenis Saldo</div>
+        <button class="modal-btn blue" onclick="pilihJenisSaldo('Bank')"><i class="fa-solid fa-building-columns"></i> Tambah Bank</button>
+        <button class="modal-btn green" onclick="pilihJenisSaldo('Cash')"><i class="fa-solid fa-money-bill-wave"></i> Tambah Cash</button>
+        <button class="modal-btn gray" onclick="tutupModalPilihSaldo()"><i class="fa-solid fa-xmark"></i> Batal</button>
     </div>
 </div>
-
 <div id="modalTambahSaldo" class="modal" style="display:none;">
-    <div class="modal-content wide">
-        <div class="modal-title" id="modalTitle">Tambah Saldo Bank</div>
+    <div class="modal-content wide"><div class="modal-title" id="modalTitle">Tambah Saldo Bank</div>
         <input type="text" class="modal-input" id="modalInput" placeholder="Masukkan nominal" inputmode="numeric">
-        <div class="modal-button-group">
-            <button class="modal-button red" id="modalBatal"><i class="fa-solid fa-xmark"></i> Batal</button>
-            <button class="modal-button green" id="modalOke"><i class="fa-solid fa-check"></i> Oke</button>
-        </div>
+        <div class="modal-button-group"><button class="modal-button red" id="modalBatal">Batal</button><button class="modal-button green" id="modalOke">Oke</button></div>
     </div>
 </div>
-
-<!-- MODAL SALDO REAL APP -->
 <div id="modalSaldoReal" class="modal" style="display:none;">
-    <div class="modal-content wide">
-        <div class="modal-title">🏦 Saldo Real App</div>
+    <div class="modal-content wide"><div class="modal-title">🏦 Saldo Real App</div>
         <input type="text" class="modal-input" id="modalSaldoRealInput" placeholder="Masukkan nominal" inputmode="numeric" onkeyup="fmt(this)">
-        <input type="text" class="modal-input" id="modalSaldoRealKet" placeholder="Keterangan (opsional)" style="margin-top:0;">
-        <div class="modal-button-group">
-            <button class="modal-button red" onclick="tutupModalSaldoReal()"><i class="fa-solid fa-xmark"></i> Batal</button>
-            <button class="modal-button green" onclick="simpanSaldoReal()"><i class="fa-solid fa-check"></i> Simpan</button>
-        </div>
+        <input type="text" class="modal-input" id="modalSaldoRealKet" placeholder="Keterangan (opsional)">
+        <div class="modal-button-group"><button class="modal-button red" onclick="tutupModalSaldoReal()">Batal</button><button class="modal-button green" onclick="simpanSaldoReal()">Simpan</button></div>
     </div>
 </div>
 
 <script>
-// ==================== ANDROID/APK SAFE DIALOGS ====================
-(function initGsDialogs(){
-  if (window.__gsDialogsReady) return;
-  window.__gsDialogsReady = true;
+// Data Users
+const USERS = {
+    "KASIR 01": { pin: "1212", role: "kasir" },
+    "KASIR 02": { pin: "2323", role: "kasir" },
+    "KASIR 03": { pin: "3434", role: "kasir" },
+    "OWNER": { pin: "9999", role: "owner" }
+};
 
-  const css = `
-  .gs-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:99999;display:none;align-items:center;justify-content:center;padding:16px;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);}
-  .gs-modal{width:min(380px,100%);background:#fff;border-radius:18px;box-shadow:0 25px 60px rgba(0,0,0,.25);overflow:hidden;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;}
-  .gs-modal-h{padding:14px 16px 8px;font-weight:800;color:#2b67f6;font-size:14px;}
-  .gs-modal-b{padding:0 16px 10px;color:#444;font-size:12px;line-height:1.5;white-space:pre-wrap;word-break:break-word;}
-  .gs-modal-f{display:flex;gap:8px;justify-content:flex-end;padding:8px 14px 14px;background:#fafafe;}
-  .gs-btn{border:none;border-radius:10px;padding:9px 14px;font-weight:800;cursor:pointer;font-size:12px;}
-  .gs-btn-cancel{background:#e9edf5;color:#555;}
-  .gs-btn-ok{background:linear-gradient(135deg,#2b67f6,#1a4fc4);color:#fff;box-shadow:0 4px 12px rgba(43,103,246,.3);}
-  .gs-toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%);background:rgba(20,20,30,.88);color:#fff;padding:8px 14px;border-radius:12px;font-size:11px;z-index:100000;max-width:min(380px,calc(100% - 24px));display:none;backdrop-filter:blur(6px);}
-  `;
-  const style = document.createElement('style');
-  style.id = 'gs-dialog-style';
-  style.textContent = css;
-  document.head.appendChild(style);
+function blankUserState() {
+    return {
+        bank: 0,
+        cash: 0,
+        tarik: 0,
+        aks: 0,
+        admin: 0,
+        loginTime: '',
+        tr: [],
+        ts: [],
+        updatedAt: '',
+        deviceId: '',
+        deviceName: ''
+    };
+}
 
-  const backdrop = document.createElement('div');
-  backdrop.className = 'gs-backdrop';
-  backdrop.id = 'gs-backdrop';
-  backdrop.innerHTML = `
-    <div class="gs-modal" role="dialog" aria-modal="true">
-      <div class="gs-modal-h" id="gs-title">Info</div>
-      <div class="gs-modal-b" id="gs-message"></div>
-      <div class="gs-modal-f" id="gs-actions"></div>
-    </div>`;
-  document.body.appendChild(backdrop);
+function clone(obj) {
+    return JSON.parse(JSON.stringify(obj));
+}
 
-  const toast = document.createElement('div');
-  toast.className = 'gs-toast';
-  toast.id = 'gs-toast';
-  document.body.appendChild(toast);
+function normalizeTxn(item, type, user) {
+    const base = item && typeof item === 'object' ? item : {};
+    return {
+        id: base.id || (type + '-' + user + '-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8)),
+        tgl: base.tgl || '',
+        jam: base.jam || '',
+        kat: base.kat || '',
+        jenis: base.jenis || '',
+        nom: toInt(base.nom),
+        adm: toInt(base.adm),
+        ket: base.ket || '',
+        user: base.user || user
+    };
+}
+
+function normalizeUserState(userData, user) {
+    const src = userData && typeof userData === 'object' ? userData : {};
+    const state = blankUserState();
+    state.bank = toInt(src.bank);
+    state.cash = toInt(src.cash);
+    state.tarik = toInt(src.tarik);
+    state.aks = toInt(src.aks);
+    state.admin = toInt(src.admin);
+    state.loginTime = src.loginTime || '';
+    state.updatedAt = src.updatedAt || '';
+    state.deviceId = src.deviceId || '';
+    state.deviceName = src.deviceName || '';
+    state.tr = Array.isArray(src.tr) ? src.tr.map(t => normalizeTxn(t, 'tr', user)) : [];
+    state.ts = Array.isArray(src.ts) ? src.ts.map(t => normalizeTxn(t, 'ts', user)) : [];
+    return state;
+}
+
+function normalizeMainDB(raw) {
+    const out = {};
+    ['KASIR 01', 'KASIR 02', 'KASIR 03'].forEach(user => {
+        out[user] = normalizeUserState(raw && raw[user] ? raw[user] : blankUserState(), user);
+    });
+    return out;
+}
+
+function saveLocalDB() {
+    localStorage.setItem(LOCAL_DB_KEY, JSON.stringify(mainDB));
+}
+
+function setSyncStatus(text, ok = true) {
+    const el = document.getElementById('sync-status');
+    if (el) {
+        el.textContent = text;
+        el.style.color = ok ? '#3d9149' : '#c0392b';
+    }
+}
+
+function makeTxnId(prefix) {
+    return prefix + '-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
+}
+
+function touchUser(user) {
+    if (!user || !mainDB[user]) return;
+    mainDB[user].updatedAt = new Date().toISOString();
+    mainDB[user].deviceId = DEVICE_ID;
+    mainDB[user].deviceName = navigator.userAgent || 'browser';
+    saveLocalDB();
+    queueCloudSync();
+}
+
+function sanitizeForCloud(userState) {
+    const copy = clone(userState || blankUserState());
+    return copy;
+}
+
+function mergeByUpdatedAt(localState, cloudState) {
+    const local = normalizeUserState(localState || blankUserState(), 'KASIR 01');
+    const cloud = normalizeUserState(cloudState || blankUserState(), 'KASIR 01');
+    const localTime = local.updatedAt ? Date.parse(local.updatedAt) : 0;
+    const cloudTime = cloud.updatedAt ? Date.parse(cloud.updatedAt) : 0;
+    if (cloudTime > localTime) return cloud;
+    if (localTime > cloudTime) return local;
+    if ((cloud.tr.length + cloud.ts.length) > (local.tr.length + local.ts.length)) return cloud;
+    return local;
+}
+
+function queueCloudSync() {
+    if (cloudSyncTimer) clearTimeout(cloudSyncTimer);
+    cloudSyncTimer = setTimeout(() => {
+        if (currentUser) syncNow(false);
+    }, 5000);
+}
+
+function postCloud(payload) {
+    if (!GAS_URL || GAS_URL.includes('https://script.google.com/macros/s/AKfycbx_-wttAqnxMgUwboTp1L_Wo7Zq7AUwbI7MAAJHurZnqZ99EfZ1FqBCDBumQ2QsH85IOw/exec')) return false;
+    try {
+        const body = JSON.stringify(payload);
+        if (navigator.sendBeacon) {
+            return navigator.sendBeacon(GAS_URL, new Blob([body], { type: 'text/plain;charset=UTF-8' }));
+        }
+        fetch(GAS_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+            body
+        }).catch(() => {});
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+function jsonpRequest(params) {
+    return new Promise((resolve, reject) => {
+        if (!GAS_URL || GAS_URL.includes('PASTE_URL_GAS_DISINI')) {
+            reject(new Error('GAS URL belum diisi'));
+            return;
+        }
+        const callbackName = 'cb_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 7);
+        const query = new URLSearchParams({ ...params, callback: callbackName, _: Date.now().toString() });
+        const script = document.createElement('script');
+        const timer = setTimeout(() => {
+            cleanup();
+            reject(new Error('Timeout'));
+        }, 15000);
+
+        function cleanup() {
+            clearTimeout(timer);
+            delete window[callbackName];
+            script.remove();
+        }
+
+        window[callbackName] = (data) => {
+            cleanup();
+            resolve(data);
+        };
+
+        script.src = GAS_URL + '?' + query.toString();
+        script.onerror = () => {
+            cleanup();
+            reject(new Error('Network error'));
+        };
+        document.head.appendChild(script);
+    });
+}
+
+async function pullCloudState() {
+    try {
+        const result = await jsonpRequest({ action: 'pull' });
+        if (result && result.ok && result.users) return result.users;
+    } catch (e) {}
+    return null;
+}
+
+async function hydrateFromCloud() {
+    if (!GAS_URL || GAS_URL.includes('PASTE_URL_GAS_DISINI')) {
+        setSyncStatus('Cloud: URL belum diisi', false);
+        return false;
+    }
+    setSyncStatus('Cloud: tarik...');
+    const users = await pullCloudState();
+    if (!users) {
+        setSyncStatus('Cloud: offline', false);
+        return false;
+    }
+    Object.keys(users).forEach(user => {
+        if (mainDB[user]) {
+            mainDB[user] = mergeByUpdatedAt(mainDB[user], users[user]);
+        }
+    });
+    mainDB = normalizeMainDB(mainDB);
+    saveLocalDB();
+    setSyncStatus('Cloud: siap');
+    return true;
+}
+
+async function syncNow(showAlert = true) {
+    if (cloudBusy) return;
+    cloudBusy = true;
+    try {
+        await hydrateFromCloud();
+        mainDB = normalizeMainDB(mainDB);
+        Object.keys(mainDB).forEach(user => {
+            mainDB[user].updatedAt = mainDB[user].updatedAt || new Date().toISOString();
+            postCloud({
+                action: 'push',
+                user,
+                state: sanitizeForCloud(mainDB[user]),
+                deviceId: DEVICE_ID,
+                deviceName: navigator.userAgent || 'browser'
+            });
+        });
+        saveLocalDB();
+        setSyncStatus('Cloud: sinkron');
+        if (showAlert) alert('✅ Sync online selesai');
+    } catch (e) {
+        setSyncStatus('Cloud: gagal', false);
+        if (showAlert) alert('❌ Sync online gagal');
+    } finally {
+        cloudBusy = false;
+    }
+}
+
+function startAutoSync() {
+    setInterval(() => {
+        if (currentUser) syncNow(false);
+    }, 60 * 60 * 1000);
+
+    window.addEventListener('online', () => {
+        if (currentUser) syncNow(false);
+    });
+
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && currentUser) syncNow(false);
+    });
+}
+const LOCAL_DB_KEY = 'alfaza_v16_multi';
+const GAS_URL = 'PASTE_URL_GAS_DISINI';
+const CLOUD_BOOTSTRAP_KEY = 'alfaza_cloud_bootstrap_done';
+
+const DEVICE_ID = (() => {
+    const key = 'alfaza_device_id';
+    let id = localStorage.getItem(key);
+    if (!id) {
+        id = 'dev-' + Math.random().toString(36).slice(2) + '-' + Date.now().toString(36);
+        localStorage.setItem(key, id);
+    }
+    return id;
 })();
 
-function gsToast(msg, ms=1800){
-  const el = document.getElementById('gs-toast');
-  if(!el) return;
-  el.textContent = msg;
-  el.style.display = 'block';
-  clearTimeout(window.__gsToastT);
-  window.__gsToastT = setTimeout(()=>{ el.style.display='none'; }, ms);
-}
+let mainDB = normalizeMainDB(JSON.parse(localStorage.getItem(LOCAL_DB_KEY)) || {
+    'KASIR 01': { bank:0, cash:0, tarik:0, aks:0, admin:0, loginTime: '', tr:[], ts:[] },
+    'KASIR 02': { bank:0, cash:0, tarik:0, aks:0, admin:0, loginTime: '', tr:[], ts:[] },
+    'KASIR 03': { bank:0, cash:0, tarik:0, aks:0, admin:0, loginTime: '', tr:[], ts:[] }
+});
 
-function gsAlert(msg, title='Info'){
-  return new Promise(resolve=>{
-    const back = document.getElementById('gs-backdrop');
-    if(!back){ console.log(msg); resolve(); return; }
-    back.style.display='flex';
-    document.getElementById('gs-title').textContent = title;
-    document.getElementById('gs-message').textContent = msg;
-    const actions = document.getElementById('gs-actions');
-    actions.innerHTML = '';
-    const ok = document.createElement('button');
-    ok.className = 'gs-btn gs-btn-ok';
-    ok.textContent = 'OK';
-    ok.onclick = ()=>{ back.style.display='none'; resolve(); };
-    actions.appendChild(ok);
-  });
-}
+let cloudSyncTimer = null;
+let cloudBusy = false;
 
-function gsConfirm(msg, title='Konfirmasi'){
-  return new Promise(resolve=>{
-    const back = document.getElementById('gs-backdrop');
-    if(!back){ resolve(false); return; }
-    back.style.display='flex';
-    document.getElementById('gs-title').textContent = title;
-    document.getElementById('gs-message').textContent = msg;
-    const actions = document.getElementById('gs-actions');
-    actions.innerHTML = '';
-    const cancel = document.createElement('button');
-    cancel.className = 'gs-btn gs-btn-cancel';
-    cancel.textContent = 'Batal';
-    cancel.onclick = ()=>{ back.style.display='none'; resolve(false); };
-    const ok = document.createElement('button');
-    ok.className = 'gs-btn gs-btn-ok';
-    ok.textContent = 'Ya';
-    ok.onclick = ()=>{ back.style.display='none'; resolve(true); };
-    actions.appendChild(cancel);
-    actions.appendChild(ok);
-  });
-}
 
-function exitAppSafely(){
-  try{ if(window.Android && typeof window.Android.exitApp === 'function'){ window.Android.exitApp(); return true; } }catch(e){}
-  try{ if(navigator.app && typeof navigator.app.exitApp === 'function'){ navigator.app.exitApp(); return true; } }catch(e){}
-  return false;
-}
-
-// ==================== DATA & STATE ====================
-let mainDB = JSON.parse(localStorage.getItem('alfaza_v14_6')) || {
-    "KASIR 01": { bank:0, cash:0, tarik:0, aks:0, admin:0, loginTime: "", tr:[], ts:[] },
-    "KASIR 02": { bank:0, cash:0, tarik:0, aks:0, admin:0, loginTime: "", tr:[], ts:[] }
-};
-let currentUser = "", db = null, katAktif = 'BANK';
-let tambahSaldoJenis = 'Bank';
+let currentUser = "", currentRole = "", db = null, katAktif = 'BANK';
 let filterKategoriAktif = 'all', filterTambahSaldoAktif = 'all';
+let salesChart = null;
+let selectedKasirOwner = "KASIR 01";
 
-// ==================== LOGIN ====================
-function prosesLogin() {
+function formatAngka(angka) { return angka.replace(/\D/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
+function fmt(el) { let v = el.value.replace(/\D/g,''); el.value = v ? new Intl.NumberFormat('id-ID').format(v) : ''; }
+function toInt(v) { return parseInt(v.toString().replace(/\D/g,'')) || 0; }
+function fmtN(v) { return new Intl.NumberFormat('id-ID').format(v); }
+function gsToast(msg) { alert(msg); }
+function gsConfirm(msg) { return confirm(msg); }
+
+async function prosesLogin() {
     const u = document.getElementById('l-user').value;
     const p = document.getElementById('l-pin').value;
-    const pins = { "KASIR 01": "1212", "KASIR 02": "2323" };
-
-    if (pins[u] === p) {
-        currentUser = u; db = mainDB[u];
-        if (!db.loginTime) db.loginTime = new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'});
-
+    if(USERS[u] && USERS[u].pin === p){
+        await hydrateFromCloud();
+        currentUser = u;
+        currentRole = USERS[u].role;
+        db = mainDB[u];
+        if(!db) { db = { bank:0, cash:0, tarik:0, aks:0, admin:0, loginTime: "", tr:[], ts:[] }; mainDB[u]=db; }
+        if(!db.loginTime) db.loginTime = new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'});
+        db.deviceId = DEVICE_ID;
+        db.deviceName = navigator.userAgent || 'browser';
+        db.updatedAt = db.updatedAt || new Date().toISOString();
         document.getElementById('page-login').style.display = 'none';
         document.getElementById('main-app').style.display = 'block';
         document.getElementById('disp-user').innerText = currentUser;
         document.getElementById('disp-login').innerText = db.loginTime;
-        document.getElementById('f-tgl').valueAsDate = new Date();
-
+        if(currentRole === 'owner'){
+            document.getElementById('owner-badge').style.display = 'inline-block';
+            document.getElementById('owner-nav-btn').style.display = 'block';
+            document.getElementById('owner-kasir-selector').style.display = 'block';
+            document.querySelectorAll('.kasir-selector-btn')[0].classList.add('active');
+            selectedKasirOwner = "KASIR 01";
+            updateOwnerDashboard();
+        } else {
+            document.getElementById('owner-badge').style.display = 'none';
+            document.getElementById('owner-nav-btn').style.display = 'none';
+            document.getElementById('owner-kasir-selector').style.display = 'none';
+        }
+        const today = new Date().toISOString().split('T')[0];
+        const weekAgo = new Date(Date.now() - 7*24*60*60*1000).toISOString().split('T')[0];
+        document.getElementById('filter-tgl-awal').value = weekAgo;
+        document.getElementById('filter-tgl-akhir').value = today;
+        document.getElementById('report-tgl-awal').value = today;
+        document.getElementById('report-tgl-akhir').value = today;
         const jamNow = new Date().getHours();
         document.getElementById('disp-shift').innerText = (jamNow >= 6 && jamNow < 15) ? "Pagi" : "Malam";
-
         initEvents();
         refresh();
-    } else { gsAlert('PIN SALAH! Coba lagi.', '❌ Gagal Masuk'); }
+        queueCloudSync();
+        filterRiwayat();
+        hitungLaporanRange();
+    } else { alert('PIN SALAH!'); }
 }
 
 function initEvents() {
-    const inpNom = document.getElementById('t-nom');
-    const inpAdm = document.getElementById('t-adm');
-    const inpKet = document.getElementById('t-ket');
-
-    if(inpNom) inpNom.addEventListener('keypress', e => { if(e.key=='Enter'){ e.preventDefault(); inpAdm.focus(); }});
-    if(inpAdm) inpAdm.addEventListener('keypress', e => { if(e.key=='Enter'){ e.preventDefault(); inpKet.focus(); }});
-    if(inpKet) inpKet.addEventListener('keypress', e => { if(e.key=='Enter'){ e.preventDefault(); simpanTr(); }});
-
-    const modalInput = document.getElementById('modalInput');
-    if(modalInput) {
-        modalInput.addEventListener('keyup', e => { e.target.value = formatAngka(e.target.value); });
-        modalInput.addEventListener('keypress', e => { if(e.key=='Enter'){ e.preventDefault(); prosesTambahSaldo(); }});
-    }
-    
-    const modalSaldoRealInput = document.getElementById('modalSaldoRealInput');
-    if(modalSaldoRealInput) {
-        modalSaldoRealInput.addEventListener('keyup', e => { e.target.value = formatAngka(e.target.value); });
-        modalSaldoRealInput.addEventListener('keypress', e => { if(e.key=='Enter'){ e.preventDefault(); simpanSaldoReal(); }});
-    }
-    
     document.getElementById('modalBatal').onclick = tutupModalTambahSaldo;
     document.getElementById('modalOke').onclick = prosesTambahSaldo;
 }
+
+startAutoSync();
 
 setInterval(() => {
     const d = new Date();
@@ -961,19 +1043,14 @@ setInterval(() => {
     document.getElementById('disp-tgl-header').innerText = d.toLocaleDateString('id-ID', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
 }, 1000);
 
-function formatAngka(angka) { return angka.replace(/\D/g,'').replace(/\B(?=(\d{3})+(?!\d))/g,'.'); }
-function fmt(el) { let v = el.value.replace(/\D/g,''); el.value = v ? new Intl.NumberFormat('id-ID').format(v) : ''; }
-function toInt(v) { return parseInt(v.toString().replace(/\D/g,'')) || 0; }
-function fmtN(v) { return new Intl.NumberFormat('id-ID').format(v); }
-
-// ==================== NAVIGATION ====================
 function bukaPage(pg, el) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     document.getElementById('page-' + pg).classList.add('active');
     if (el) el.classList.add('active');
     if(pg === 'history') filterRiwayat();
-    if(pg === 'report') hitungLaporan();
+    if(pg === 'report') hitungLaporanRange();
+    if(pg === 'owner' && currentRole === 'owner') updateOwnerDashboard();
     tutupModalPilihSaldo();
     tutupModalTambahSaldo();
 }
@@ -984,411 +1061,255 @@ function pilihKat(k, el) {
     el.classList.add('active');
 }
 
-// ==================== SIMPAN TRANSAKSI ====================
 function simpanTr() {
     const nom = toInt(document.getElementById('t-nom').value);
     const adm = toInt(document.getElementById('t-adm').value);
     const ket = document.getElementById('t-ket').value;
-    if(!nom) { gsAlert('Masukkan nominal terlebih dahulu!', '⚠️ Perhatian'); document.getElementById('t-nom').focus(); return; }
-
+    if(!nom) { alert('Masukkan nominal terlebih dahulu!'); return; }
     const now = new Date();
     const tgl = now.toISOString().split('T')[0];
     const jam = now.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'});
-
-    if(katAktif === 'TARIK TUNAI') { 
-        db.cash -= nom; 
-        db.tarik += nom; 
-    }
-    else if(katAktif === 'AKSESORIS') { 
-        db.aks += nom; 
-        // Cash TIDAK bertambah untuk aksesoris
-    }
-    else if(katAktif === 'BANK' || katAktif === 'FLIP' || katAktif === 'DANA' || katAktif === 'APP PULSA') { 
-        db.bank -= nom; 
-        db.cash += nom; 
-    }
-
+    if(katAktif === 'TARIK TUNAI') { db.cash -= nom; db.tarik += nom; }
+    else if(katAktif === 'AKSESORIS') { db.aks += nom; }
+    else if(['BANK','FLIP','DANA','APP PULSA'].includes(katAktif)) { db.bank -= nom; db.cash += nom; }
     db.admin += adm;
-    db.tr.unshift({ tgl, jam, kat: katAktif, nom, adm, ket });
-
+    db.tr.unshift({ id: makeTxnId('tr'), tgl, jam, kat: katAktif, nom, adm, ket });
+    touchUser(currentUser);
     refresh();
     document.getElementById('t-nom').value = document.getElementById('t-adm').value = document.getElementById('t-ket').value = "";
     document.getElementById('t-nom').focus();
-    gsToast('✅ Transaksi berhasil disimpan');
+    alert('✅ Transaksi tersimpan');
 }
 
-// ==================== SALDO ====================
 function bukaMenuSaldo() { document.getElementById('modalPilihSaldo').style.display = 'flex'; }
 function tutupModalPilihSaldo() { document.getElementById('modalPilihSaldo').style.display = 'none'; }
-
 function pilihJenisSaldo(jenis) {
-    tambahSaldoJenis = jenis;
     document.getElementById('modalTitle').innerText = jenis === 'Bank' ? '🏦 Tambah Saldo Bank' : '💵 Tambah Saldo Cash';
     document.getElementById('modalInput').value = '';
     tutupModalPilihSaldo();
     document.getElementById('modalTambahSaldo').style.display = 'flex';
-    document.getElementById('modalInput').focus();
 }
-
 function prosesTambahSaldo() {
     const raw = document.getElementById('modalInput').value.replace(/\./g, '');
     if(raw) {
         const nom = toInt(raw);
         const now = new Date();
-        if(tambahSaldoJenis === 'Bank') db.bank += nom; else db.cash += nom;
-        db.ts.unshift({ tgl: now.toISOString().split('T')[0], jam: now.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}), jenis: tambahSaldoJenis, nom, ket: '' });
+        document.getElementById('modalTitle').innerText.includes('Bank') ? db.bank += nom : db.cash += nom;
+        db.ts.unshift({ id: makeTxnId('ts'), tgl: now.toISOString().split('T')[0], jam: now.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}), jenis: document.getElementById('modalTitle').innerText.includes('Bank') ? 'Bank' : 'Cash', nom, ket: '' });
+        touchUser(currentUser);
         refresh();
-        gsToast('✅ Saldo berhasil ditambahkan');
+        alert('✅ Saldo ditambahkan');
     }
     tutupModalTambahSaldo();
 }
-
 function tutupModalTambahSaldo() { document.getElementById('modalTambahSaldo').style.display = 'none'; }
-
-// ==================== SALDO REAL APP ====================
-function bukaModalSaldoReal() {
-    document.getElementById('modalSaldoRealInput').value = '';
-    document.getElementById('modalSaldoRealKet').value = '';
-    document.getElementById('modalSaldoReal').style.display = 'flex';
-    document.getElementById('modalSaldoRealInput').focus();
-}
-
-function tutupModalSaldoReal() {
-    document.getElementById('modalSaldoReal').style.display = 'none';
-}
-
+function tutupModalSaldoReal() { document.getElementById('modalSaldoReal').style.display = 'none'; }
 function simpanSaldoReal() {
     const raw = document.getElementById('modalSaldoRealInput').value.replace(/\./g, '');
-    const ket = document.getElementById('modalSaldoRealKet').value;
-    
     if(raw) {
         const nom = toInt(raw);
         const now = new Date();
-        db.ts.unshift({ 
-            tgl: now.toISOString().split('T')[0], 
-            jam: now.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}), 
-            jenis: 'Saldo Real App', 
-            nom,
-            ket
-        });
+        db.ts.unshift({ id: makeTxnId('sr'), tgl: now.toISOString().split('T')[0], jam: now.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}), jenis: 'Saldo Real App', nom, ket: document.getElementById('modalSaldoRealKet').value });
+        touchUser(currentUser);
         refresh();
-        gsToast('✅ Saldo Real App berhasil disimpan');
+        alert('✅ Saldo Real tersimpan');
+        if(document.getElementById('page-report').classList.contains('active')) hitungLaporanRange();
     }
     tutupModalSaldoReal();
-    if(document.getElementById('page-report').classList.contains('active')) {
-        hitungLaporan();
-    }
 }
 
-// ==================== FILTER ====================
 function filterKategori(k, el) { filterKategoriAktif = k; updateFilterActive('#filter-transaksi', el); filterRiwayat(); }
 function filterTambahSaldo(j, el) { filterTambahSaldoAktif = j; updateFilterActive('#filter-tambahsaldo', el); filterRiwayat(); }
+function updateFilterActive(selector, el) { document.querySelectorAll(selector + ' .filter-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); }
 
-function updateFilterActive(selector, el) {
-    document.querySelectorAll(selector + ' .filter-btn').forEach(b => b.classList.remove('active'));
-    el.classList.add('active');
+function getCurrentDBForHistory() {
+    if(currentRole === 'owner'){
+        const selected = document.getElementById('owner-kasir-filter').value;
+        if(selected === 'all') return mainDB;
+        return { [selected]: mainDB[selected] };
+    }
+    return { [currentUser]: db };
 }
 
-// ==================== FILTER RIWAYAT ====================
 function filterRiwayat() {
-    const tgl = document.getElementById('f-tgl').value;
+    const tglAwal = document.getElementById('filter-tgl-awal').value;
+    const tglAkhir = document.getElementById('filter-tgl-akhir').value;
     const cari = document.getElementById('f-cari').value.toLowerCase();
-    let hTr = '', hTs = '';
-
-    // Ambil semua transaksi hari ini, balik urutan agar kronologis (pagi = no.1)
-    const allForDate = [...db.tr.filter(i => i.tgl === tgl)].reverse();
-
-    // Map warna per kategori
-    const katClass = {
-        'BANK': 'tr-bank', 'FLIP': 'tr-flip', 'APP PULSA': 'tr-app',
-        'DANA': 'tr-dana', 'TARIK TUNAI': 'tr-tarik', 'AKSESORIS': 'tr-aks'
-    };
-
-    const filtered = allForDate
-        .map((i, idx) => ({ ...i, no: idx + 1 }))
-        .filter(i => filterKategoriAktif === 'all' || i.kat === filterKategoriAktif)
-        .filter(i => i.kat.toLowerCase().includes(cari) || (i.ket && i.ket.toLowerCase().includes(cari)));
-
-    let totalNomFiltered = 0, totalAdmFiltered = 0;
-
+    const dbSource = getCurrentDBForHistory();
+    let allTr = [], allTs = [];
+    Object.keys(dbSource).forEach(user => {
+        dbSource[user].tr.forEach(t => {
+            if(t.tgl >= tglAwal && t.tgl <= tglAkhir) allTr.push({ ...t, user });
+        });
+        dbSource[user].ts.forEach(t => {
+            if(t.tgl >= tglAwal && t.tgl <= tglAkhir) allTs.push({ ...t, user });
+        });
+    });
+    allTr.sort((a,b)=>b.tgl.localeCompare(a.tgl) || b.jam.localeCompare(a.jam));
+    allTs.sort((a,b)=>b.tgl.localeCompare(a.tgl) || b.jam.localeCompare(a.jam));
+    allTr = allTr.map((i, idx) => ({ ...i, no: idx + 1 }));
+    allTs = allTs.map((i, idx) => ({ ...i, no: idx + 1 }));
+    const katClass = { 'BANK':'tr-bank','FLIP':'tr-flip','APP PULSA':'tr-app','DANA':'tr-dana','TARIK TUNAI':'tr-tarik','AKSESORIS':'tr-aks' };
+    let filtered = allTr.filter(i => filterKategoriAktif === 'all' || i.kat === filterKategoriAktif).filter(i => i.kat.toLowerCase().includes(cari) || (i.ket && i.ket.toLowerCase().includes(cari)));
+    let hTr = '', totalNom=0, totalAdm=0;
     filtered.forEach(i => {
-        let label = i.kat;
-        if (label === 'AKSESORIS') label = 'Aks';
-        if (label === 'TARIK TUNAI') label = 'Tarik';
-        const cls = katClass[i.kat] || '';
-        const ketTeks = i.ket ? (i.ket.length > 7 ? i.ket.substring(0,7)+'…' : i.ket) : '-';
-        totalNomFiltered += i.nom;
-        totalAdmFiltered += i.adm;
-        hTr += `<tr class="${cls}">
-            <td class="no-col" style="text-align:center">${i.no}</td>
-            <td>${i.jam}</td>
-            <td>${label}</td>
-            <td>${fmtN(i.nom)}</td>
-            <td>${i.adm > 0 ? fmtN(i.adm) : '-'}</td>
-            <td>${ketTeks}</td>
-        </tr>`;
+        totalNom += i.nom; totalAdm += i.adm;
+        hTr += `<tr class="${katClass[i.kat]||''}"><td class="no-col">${i.no}<td>${i.tgl}<td>${i.jam}<td>${i.kat === 'AKSESORIS'?'Aks':i.kat === 'TARIK TUNAI'?'Tarik':i.kat}<td>${fmtN(i.nom)}<td>${i.adm>0?fmtN(i.adm):'-'}<td>${i.ket?i.ket.substring(0,7)+'…':'-'}${currentRole==='owner'?`<br><small style="color:#888">${i.user}</small>`:''}</tr>`;
     });
-
-    if (filtered.length > 0) {
-        hTr += `<tr>
-            <td colspan="3" style="text-align:right; font-weight:800; color:#2b67f6; padding:5px 4px; background:#f0f4ff; font-size:8px;">TOTAL (${filtered.length})</td>
-            <td style="font-weight:800; color:#2b67f6; font-size:8px; background:#f0f4ff;">${fmtN(totalNomFiltered)}</td>
-            <td style="font-weight:800; color:var(--orange); font-size:8px; background:#f0f4ff;">${fmtN(totalAdmFiltered)}</td>
-            <td style="background:#f0f4ff;"></td>
-        </tr>`;
-    }
-
-    // Tambah saldo - kronologis juga
-    const allTsForDate = [...db.ts.filter(i => i.tgl === tgl)].reverse();
-    const filteredTs = allTsForDate
-        .map((i, idx) => ({ ...i, no: idx + 1 }))
-        .filter(i => filterTambahSaldoAktif === 'all' || i.jenis === filterTambahSaldoAktif);
-
-    let totalTsFiltered = 0;
-    filteredTs.forEach(i => {
-        const tsClass = i.jenis === 'Bank' ? 'tr-bank' : (i.jenis === 'Cash' ? 'tr-aks' : 'tr-bank');
-        totalTsFiltered += i.nom;
-        hTs += `<tr class="${tsClass}">
-            <td class="no-col" style="text-align:center">${i.no}</td>
-            <td>${i.jam}</td>
-            <td>${i.jenis}</td>
-            <td>Rp ${fmtN(i.nom)}</td>
-            <td>${i.ket || '-'}</td>
-        </tr>`;
-    });
-
-    if (filteredTs.length > 0) {
-        hTs += `<tr>
-            <td colspan="4" style="text-align:right; font-weight:800; color:#2b67f6; padding:5px 4px; background:#f0f4ff; font-size:8px;">TOTAL (${filteredTs.length})</td>
-            <td style="font-weight:800; color:#2b67f6; font-size:8px; background:#f0f4ff;">Rp ${fmtN(totalTsFiltered)}</td>
-        </tr>`;
-    }
-
-    document.getElementById('list-riwayat').innerHTML = hTr ||
-        `<tr><td colspan="6"><div class="empty-state"><i class="fa-solid fa-inbox"></i>Tidak ada transaksi</div></td></tr>`;
-    document.getElementById('list-tambah-saldo').innerHTML = hTs ||
-        `<tr><td colspan="5"><div class="empty-state"><i class="fa-solid fa-inbox"></i>Tidak ada tambah saldo</div></td></tr>`;
+    if(filtered.length) hTr += `<tr><td colspan="4" style="text-align:right;font-weight:800;">TOTAL<td style="font-weight:800;">${fmtN(totalNom)}<td style="font-weight:800;">${fmtN(totalAdm)}<td></tr>`;
+    document.getElementById('list-riwayat').innerHTML = hTr || `<tr><td colspan="7"><div class="empty-state"><i class="fa-solid fa-inbox"></i>Tidak ada transaksi</div></tr>`;
+    
+    let filteredTs = allTs.filter(i => filterTambahSaldoAktif === 'all' || i.jenis === filterTambahSaldoAktif);
+    let hTs = '', totalTs=0;
+    filteredTs.forEach(i => { totalTs += i.nom; hTs += `<tr><td class="no-col">${i.no}<td>${i.tgl}<td>${i.jam}<td>${i.jenis}<td>Rp ${fmtN(i.nom)}${currentRole==='owner'?`<br><small>${i.user}</small>`:''}</tr>`; });
+    if(filteredTs.length) hTs += `<tr><td colspan="4" style="text-align:right;font-weight:800;">TOTAL (${filteredTs.length})<td style="font-weight:800;">Rp ${fmtN(totalTs)}</tr>`;
+    document.getElementById('list-tambah-saldo').innerHTML = hTs || `<tr><td colspan="5"><div class="empty-state"><i class="fa-solid fa-inbox"></i>Tidak ada tambah saldo</div></tr>`;
 }
 
-// ==================== LAPORAN ====================
-function hitungLaporan() {
-    const tgl = document.getElementById('f-tgl').value;
-    const fTr = db.tr.filter(x => x.tgl === tgl);
-    const fTs = db.ts.filter(x => x.tgl === tgl);
-
+function hitungLaporanRange() {
+    const tglAwal = document.getElementById('report-tgl-awal').value;
+    const tglAkhir = document.getElementById('report-tgl-akhir').value;
+    const fTr = db.tr.filter(x => x.tgl >= tglAwal && x.tgl <= tglAkhir);
+    const fTs = db.ts.filter(x => x.tgl >= tglAwal && x.tgl <= tglAkhir);
     const getSum = k => fTr.filter(x => x.kat === k).reduce((a,b) => a + b.nom, 0);
-    let sBank = getSum('BANK'), sFlip = getSum('FLIP'), sDana = getSum('DANA'), sApp = getSum('APP PULSA');
-    let sAks = getSum('AKSESORIS'), sTarik = getSum('TARIK TUNAI');
-    let totalPenjualan = sBank + sFlip + sDana + sApp;
-
-    let tModCash = fTs.filter(x => x.jenis === 'Cash').reduce((a,b) => a + b.nom, 0);
-    let tModBank = fTs.filter(x => x.jenis === 'Bank').reduce((a,b) => a + b.nom, 0);
-
-    let totalAdmin = fTr.reduce((a,b) => a + b.adm, 0);
-    // Sisa Cash Total = Cash + Admin + Aksesoris
-    let sisaCashTotal = db.cash + totalAdmin + sAks;
-    
-    // Ambil semua history Saldo Real App untuk hari ini
-    const saldoRealHistory = fTs.filter(x => x.jenis === 'Saldo Real App');
-    // Saldo Real App terakhir
-    let saldoRealTerakhir = saldoRealHistory.length > 0 ? saldoRealHistory[0].nom : 0;
-
-    // Buat HTML untuk history saldo real
-    let saldoRealHistoryHtml = '';
-    if (saldoRealHistory.length > 0) {
-        saldoRealHistoryHtml = '<div class="history-saldo-real"><div style="font-weight:700; color:var(--primary); margin-bottom:5px; font-size:11px;">📋 Riwayat Saldo Real App:</div>';
-        saldoRealHistory.forEach((item, index) => {
-            saldoRealHistoryHtml += `
-                <div class="history-saldo-item">
-                    <span><span class="history-saldo-time">${item.jam}</span> ${item.ket ? '<span class="history-saldo-ket"> - ' + item.ket + '</span>' : ''}</span>
-                    <span class="history-saldo-nominal">Rp ${fmtN(item.nom)}</span>
-                </div>
-            `;
+    let sBank=getSum('BANK'), sFlip=getSum('FLIP'), sDana=getSum('DANA'), sApp=getSum('APP PULSA'), sAks=getSum('AKSESORIS'), sTarik=getSum('TARIK TUNAI'), totalPenjualan = sBank+sFlip+sDana+sApp, totalAdmin = fTr.reduce((a,b)=>a+b.adm,0), sisaCashTotal = db.cash + totalAdmin + sAks;
+    let tModBank = fTs.filter(x=>x.jenis==='Bank').reduce((a,b)=>a+b.nom,0);
+    let saldoRealHistory = fTs.filter(x=>x.jenis==='Saldo Real App');
+    let totalSaldoReal = saldoRealHistory.reduce((a,b)=>a+b.nom,0);
+    let saldoRealHtml = '';
+    if(saldoRealHistory.length){
+        saldoRealHtml = `<div class="history-saldo-real"><div style="font-weight:700; margin-bottom:5px;">📋 Riwayat Saldo Real App:</div>`;
+        saldoRealHistory.forEach(item => {
+            saldoRealHtml += `<div style="display:flex; justify-content:space-between; font-size:9px; padding:3px 0;"><span>${item.jam} ${item.ket?`- ${item.ket}`:''}</span><span>Rp ${fmtN(item.nom)}</span></div>`;
         });
-        saldoRealHistoryHtml += '</div>';
+        saldoRealHtml += `<div style="margin-top:5px; font-weight:700; border-top:1px solid #ddd; padding-top:4px;">TOTAL: Rp ${fmtN(totalSaldoReal)}</div></div>`;
     }
-
+    
     document.getElementById('rep-area').innerHTML = `
         <div class="report-card">
-            <h3 style="text-align:center; margin:0 0 4px; font-size:13px; color:var(--dark); font-weight:800;">
-                <i class="fa-solid fa-chart-bar" style="color:var(--primary)"></i> LAPORAN HARIAN
-            </h3>
-            <p style="text-align:center; color:#aaa; margin-bottom:12px; font-size:10px;">${tgl}</p>
-
+            <h3 style="text-align:center; font-size:13px;">📋 LAPORAN PERIODE</h3>
+            <p style="text-align:center; font-size:10px; color:#888;">${tglAwal} s/d ${tglAkhir}</p>
             <div class="report-row"><span>🏦 Saldo Bank Masuk (Tambah)</span><b>Rp ${fmtN(tModBank)}</b></div>
-            
-            <h4 style="margin:10px 0 5px; font-size:11px; color:var(--primary); font-weight:800;">📊 Penjualan:</h4>
+            <h4 style="margin:8px 0 4px; font-size:11px;">📊 Penjualan:</h4>
             <div class="report-row"><span>🏦 Bank</span><b>Rp ${fmtN(sBank)}</b></div>
             <div class="report-row"><span>🔀 Flip</span><b>Rp ${fmtN(sFlip)}</b></div>
             <div class="report-row"><span>👛 Dana</span><b>Rp ${fmtN(sDana)}</b></div>
             <div class="report-row"><span>📱 App Pulsa</span><b>Rp ${fmtN(sApp)}</b></div>
-            <div class="report-row" style="background:#f0f4ff; border-radius:8px; padding:6px 4px;">
-                <span style="font-weight:800; color:var(--primary)">TOTAL PENJUALAN</span>
-                <b style="color:var(--primary)">Rp ${fmtN(totalPenjualan)}</b>
-            </div>
-
-            <div class="report-row" style="color:var(--red);"><span>💸 Tarik Tunai</span><b>-Rp ${fmtN(sTarik)}</b></div>
-            <!-- Sisa Cash Penjualan murni cash penjualan (tidak termasuk admin & aksesoris) -->
-            <div class="report-row" style="background:#f0fff4; border-radius:8px; padding:6px 4px;">
-                <span>💰 Sisa Cash Penjualan</span><b style="color:#2d8a47">Rp ${fmtN(db.cash)}</b>
-            </div>
-
-            <div class="report-row"><span>📋 Admin</span><b style="color:var(--orange)">Rp ${fmtN(totalAdmin)}</b></div>
+            <div class="report-row" style="background:#f0f4ff; border-radius:8px;"><span>TOTAL PENJUALAN</span><b>Rp ${fmtN(totalPenjualan)}</b></div>
+            <div class="report-row"><span>💸 Tarik Tunai</span><b>-Rp ${fmtN(sTarik)}</b></div>
+            <div class="report-row"><span>💰 Sisa Cash Penjualan</span><b>Rp ${fmtN(db.cash)}</b></div>
+            <div class="report-row"><span>📋 Admin</span><b>Rp ${fmtN(totalAdmin)}</b></div>
             <div class="report-row"><span>🎧 Aksesoris</span><b>Rp ${fmtN(sAks)}</b></div>
-
             <div class="report-total-section">
-                <div class="report-total-row">
-                    <span class="report-total-label">💰 SISA CASH TOTAL</span>
-                    <span class="report-total-value">Rp ${fmtN(sisaCashTotal)}</span>
-                </div>
-                <div class="report-footer">
-                    Sisa Cash Penjualan: Rp ${fmtN(db.cash)} + Admin: Rp ${fmtN(totalAdmin)} + Aksesoris: Rp ${fmtN(sAks)}
-                </div>
+                <div style="display:flex; justify-content:space-between;"><span>SISA CASH TOTAL</span><span>Rp ${fmtN(sisaCashTotal)}</span></div>
+                <div style="font-size:8px; opacity:0.8; margin-top:4px;">Cash + Admin + Aksesoris</div>
             </div>
-            
-            <!-- PERBANDINGAN SALDO BANK dengan HISTORY -->
-            <div style="margin-top:15px; padding:10px; background:#f8f9ff; border-radius:12px; border:1.5px solid #dde4f5;">
-                <div style="font-weight:800; color:var(--primary); margin-bottom:8px; font-size:12px;">
-                    <i class="fa-solid fa-scale-balanced"></i> CEK KESESUAIAN SALDO BANK
-                </div>
-                <div class="comparison-item">
-                    <span class="comparison-label">🏦 Saldo Bank Saat Ini (Catatan):</span>
-                    <span class="comparison-value">Rp ${fmtN(db.bank)}</span>
-                </div>
-                <div class="comparison-item">
-                    <span class="comparison-label">💰 Saldo Real Aplikasi (Bank):</span>
-                    <span class="comparison-value">Rp ${fmtN(saldoRealTerakhir)}</span>
-                </div>
-                <div class="comparison-diff">
-                    ${db.bank !== saldoRealTerakhir ? 
-                        `⚠️ Selisih: Rp ${fmtN(Math.abs(db.bank - saldoRealTerakhir))} (${db.bank > saldoRealTerakhir ? 'Lebih catatan' : 'Kurang catatan'})` : 
-                        '✅ Sesuai'}
-                </div>
+            <div style="margin-top:12px; padding:8px; background:#f8f9ff; border-radius:10px;">
+                <div style="font-weight:700; margin-bottom:6px;">⚖️ CEK KESESUAIAN BANK</div>
+                <div>Saldo Bank Catatan: Rp ${fmtN(db.bank)}</div>
+                <div>TOTAL Saldo Real App: Rp ${fmtN(totalSaldoReal)}</div>
+                <div style="margin-top:4px;">${db.bank !== totalSaldoReal ? `⚠️ Selisih: Rp ${fmtN(Math.abs(db.bank - totalSaldoReal))}` : '✅ Sesuai'}</div>
             </div>
-            
-            <!-- HISTORY SALDO REAL APP -->
-            ${saldoRealHistoryHtml}
+            ${saldoRealHtml}
         </div>
-
-        <div class="action-buttons">
-            <button type="button" class="action-btn btn-orange" onclick="resetSaldo()">
-                <i class="fa-solid fa-rotate-right"></i> Reset Saldo
-            </button>
-            <button type="button" class="action-btn btn-green" onclick="shareLaporanTeks()">
-                <i class="fa-brands fa-whatsapp"></i> Share Teks
-            </button>
-            <button type="button" class="action-btn btn-blue" onclick="bukaModalSaldoReal()">
-                <i class="fa-solid fa-pencil"></i> Saldo Real App
-            </button>
+        <div class="action-buttons" style="flex-wrap:wrap;">
+            <button class="action-btn btn-orange" onclick="resetSaldo()"><i class="fa-solid fa-rotate-right"></i> Reset Saldo</button>
+            <button class="action-btn btn-green" onclick="shareLaporan()"><i class="fa-brands fa-whatsapp"></i> Share Teks</button>
+            <button class="action-btn btn-blue" onclick="bukaModalSaldoReal()"><i class="fa-solid fa-pencil"></i> Saldo Real</button>
+            <button class="action-btn btn-blue" onclick="syncNow(true)"><i class="fa-solid fa-cloud-arrow-up"></i> Sync Manual</button>
         </div>
     `;
 }
 
-// ==================== SHARE TEKS (WhatsApp / SMS / dll) ====================
-async function shareLaporanTeks() {
-    const tgl = document.getElementById('f-tgl').value;
-    const fTr = db.tr.filter(x => x.tgl === tgl);
-    const fTs = db.ts.filter(x => x.tgl === tgl);
-    
+function shareLaporan() {
+    const tglAwal = document.getElementById('report-tgl-awal').value;
+    const tglAkhir = document.getElementById('report-tgl-akhir').value;
+    const fTr = db.tr.filter(x => x.tgl >= tglAwal && x.tgl <= tglAkhir);
+    const fTs = db.ts.filter(x => x.tgl >= tglAwal && x.tgl <= tglAkhir);
     const getSum = k => fTr.filter(x => x.kat === k).reduce((a,b) => a + b.nom, 0);
-    let sBank = getSum('BANK'), sFlip = getSum('FLIP'), sDana = getSum('DANA'), sApp = getSum('APP PULSA');
-    let sAks = getSum('AKSESORIS'), sTarik = getSum('TARIK TUNAI');
-    let totalPenjualan = sBank + sFlip + sDana + sApp;
-    let totalAdmin = fTr.reduce((a,b) => a + b.adm, 0);
-    let sisaCashTotal = db.cash + totalAdmin + sAks;
+    let sBank=getSum('BANK'), sFlip=getSum('FLIP'), sDana=getSum('DANA'), sApp=getSum('APP PULSA'), sAks=getSum('AKSESORIS'), sTarik=getSum('TARIK TUNAI'), totalPenjualan = sBank+sFlip+sDana+sApp, totalAdmin = fTr.reduce((a,b)=>a+b.adm,0), sisaCashTotal = db.cash + totalAdmin + sAks;
+    let tModBank = fTs.filter(x=>x.jenis==='Bank').reduce((a,b)=>a+b.nom,0);
+    let saldoRealHistory = fTs.filter(x=>x.jenis==='Saldo Real App');
+    let totalSaldoReal = saldoRealHistory.reduce((a,b)=>a+b.nom,0);
+    let teks = `📱 LAPORAN ALFAZA CELL\n📅 ${tglAwal} s/d ${tglAkhir}\n\n💰 SALDO BANK MASUK: Rp ${fmtN(tModBank)}\n\n📊 PENJUALAN:\n• Bank: Rp ${fmtN(sBank)}\n• Flip: Rp ${fmtN(sFlip)}\n• Dana: Rp ${fmtN(sDana)}\n• App: Rp ${fmtN(sApp)}\n• TOTAL: Rp ${fmtN(totalPenjualan)}\n\n📉 LAINNYA:\n• Tarik Tunai: -Rp ${fmtN(sTarik)}\n• Sisa Cash: Rp ${fmtN(db.cash)}\n• Admin: Rp ${fmtN(totalAdmin)}\n• Aksesoris: Rp ${fmtN(sAks)}\n\n💰 SISA CASH TOTAL: Rp ${fmtN(sisaCashTotal)}\n\n⚖️ CEK BANK:\nCatatan: Rp ${fmtN(db.bank)}\nSaldo Real: Rp ${fmtN(totalSaldoReal)}\n${db.bank !== totalSaldoReal ? `Selisih: Rp ${fmtN(Math.abs(db.bank - totalSaldoReal))}` : '✅ Sesuai'}\n\n${new Date().toLocaleString('id-ID')}`;
+    navigator.clipboard.writeText(teks).then(() => alert('📋 Teks laporan disalin!')).catch(() => alert('Gagal menyalin'));
+}
+
+// OWNER DASHBOARD FUNCTIONS
+function pilihKasirOwner(kasir, el) {
+    selectedKasirOwner = kasir;
+    document.querySelectorAll('.kasir-selector-btn').forEach(btn => btn.classList.remove('active'));
+    el.classList.add('active');
+    updateOwnerDashboard();
+}
+
+function updateOwnerDashboard() {
+    updateOwnerChart();
+    updateOwnerPembukuan();
+}
+
+function updateOwnerChart() {
+    const kasirData = mainDB[selectedKasirOwner];
+    const last7Days = [];
+    const salesData = [];
+    const categories = ['BANK', 'FLIP', 'DANA', 'APP PULSA'];
     
-    const saldoRealHistory = fTs.filter(x => x.jenis === 'Saldo Real App');
-    let saldoRealTerakhir = saldoRealHistory.length > 0 ? saldoRealHistory[0].nom : 0;
+    for(let i = 6; i >= 0; i--) {
+        const date = new Date(Date.now() - i*24*60*60*1000).toISOString().split('T')[0];
+        last7Days.push(date.substring(5));
+        let total = 0;
+        kasirData.tr.filter(t => t.tgl === date && categories.includes(t.kat)).forEach(t => total += t.nom);
+        salesData.push(total);
+    }
+    
+    const ctx = document.getElementById('salesChart').getContext('2d');
+    if(salesChart) salesChart.destroy();
+    salesChart = new Chart(ctx, {
+        type: 'bar',
+        data: { labels: last7Days, datasets: [{ label: `${selectedKasirOwner} - Penjualan`, data: salesData, backgroundColor: '#2b67f6', borderRadius: 6 }] },
+        options: { responsive: true, maintainAspectRatio: true, plugins: { legend: { position: 'top', labels: { font: { size: 10 } } } } }
+    });
+}
 
-    let tglFmt = tgl;
-    try {
-        const d = new Date(tgl);
-        const hariNama = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'][d.getDay()];
-        const bln = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus',
-                     'September','Oktober','November','Desember'][d.getMonth()];
-        tglFmt = `${hariNama}, ${d.getDate()} ${bln} ${d.getFullYear()}`;
-    } catch(e) {}
+function updateOwnerPembukuan() {
+    const data = mainDB[selectedKasirOwner];
+    const totalPenjualan = data.tr.filter(t => ['BANK','FLIP','DANA','APP PULSA'].includes(t.kat)).reduce((a,b)=>a+b.nom,0);
+    
+    document.getElementById('owner-pembukuan-detail').innerHTML = `
+        <div class="report-card">
+            <h4 style="font-size:12px; margin-bottom:10px;">📋 PEMBUKUAN ${selectedKasirOwner}</h4>
+            <div class="report-row"><span>🏦 Saldo Bank</span><b>Rp ${fmtN(data.bank)}</b></div>
+            <div class="report-row"><span>💰 Saldo Cash</span><b>Rp ${fmtN(data.cash)}</b></div>
+            <div class="report-row"><span>💸 Total Penarikan</span><b>Rp ${fmtN(data.tarik)}</b></div>
+            <div class="report-row"><span>🎧 Total Aksesoris</span><b>Rp ${fmtN(data.aks)}</b></div>
+            <div class="report-row"><span>📋 Total Admin</span><b>Rp ${fmtN(data.admin)}</b></div>
+            <div class="report-row"><span>📊 Total Penjualan</span><b>Rp ${fmtN(totalPenjualan)}</b></div>
+            <div class="report-row"><span>📝 Jumlah Transaksi</span><b>${data.tr.length} kali</b></div>
+            <div class="report-total-section" style="margin-top:10px;">
+                <div style="display:flex; justify-content:space-between;"><span>TOTAL OMZET</span><span>Rp ${fmtN(totalPenjualan + data.aks)}</span></div>
+            </div>
+        </div>
+    `;
+}
 
-    let teks =
-`📱 *LAPORAN HARIAN ALFAZA CELL*
-📅 ${tglFmt}
-${'─'.repeat(32)}
-
-💰 *SALDO*
-• Saldo Bank Masuk : Rp ${fmtN(fTs.filter(x => x.jenis === 'Bank').reduce((a,b) => a + b.nom, 0))}
-
-📊 *PENJUALAN*
-• Bank     : Rp ${fmtN(sBank)}
-• Flip     : Rp ${fmtN(sFlip)}
-• Dana     : Rp ${fmtN(sDana)}
-• App Pulsa: Rp ${fmtN(sApp)}
-• *TOTAL   : Rp ${fmtN(totalPenjualan)}*
-
-📉 *PENGELUARAN & PENDAPATAN*
-• Tarik Tunai : -Rp ${fmtN(sTarik)}
-• Sisa Cash Penjualan : Rp ${fmtN(db.cash)}
-• Admin       : Rp ${fmtN(totalAdmin)}
-• Aksesoris   : Rp ${fmtN(sAks)}
-
-💰 *SISA CASH TOTAL : Rp ${fmtN(sisaCashTotal)}*
-(Sisa Cash Penjualan + Admin + Aksesoris)
-
-⚖️ *CEK SALDO BANK*
-• Saldo Bank Catatan : Rp ${fmtN(db.bank)}
-• Saldo Real Aplikasi : Rp ${fmtN(saldoRealTerakhir)}
-• ${db.bank !== saldoRealTerakhir ? 
-    `⚠️ Selisih: Rp ${fmtN(Math.abs(db.bank - saldoRealTerakhir))} (${db.bank > saldoRealTerakhir ? 'Lebih catatan' : 'Kurang catatan'})` : 
-    '✅ Sesuai'}
-
-${'─'.repeat(32)}`;
-
-    // Tambah history Saldo Real App
-    if (saldoRealHistory.length > 0) {
-        teks += `\n\n📋 *RIWAYAT SALDO REAL APP:*\n`;
-        saldoRealHistory.forEach((item, i) => {
-            teks += `${i+1}. ${item.jam} - Rp ${fmtN(item.nom)} ${item.ket ? '(' + item.ket + ')' : ''}\n`;
+async function resetSaldo() {
+    if(confirm('Reset semua saldo ke 0? Semua data kasir akan direset!')) {
+        Object.keys(mainDB).forEach(k => {
+            mainDB[k].bank = 0; mainDB[k].cash = 0;
+            mainDB[k].tarik = 0; mainDB[k].aks = 0; mainDB[k].admin = 0;
+            mainDB[k].updatedAt = new Date().toISOString();
+            mainDB[k].deviceId = DEVICE_ID;
+            mainDB[k].deviceName = navigator.userAgent || 'browser';
         });
-    }
-
-    teks += `\n${'─'.repeat(32)}
-📄 Alfaza Cell App • ${new Date().toLocaleString('id-ID')}`;
-
-    // Coba Web Share API (teks)
-    if (navigator.share) {
-        try {
-            await navigator.share({
-                title: `Laporan Alfaza Cell - ${tgl}`,
-                text: teks
-            });
-            gsToast('✅ Laporan berhasil dibagikan!');
-            return;
-        } catch (e) {
-            if (e.name === 'AbortError') return;
-        }
-    }
-
-    // Fallback: copy ke clipboard
-    try {
-        await navigator.clipboard.writeText(teks);
-        gsToast('📋 Teks laporan disalin ke clipboard!');
-    } catch (e) {
-        // Fallback clipboard manual
-        const ta = document.createElement('textarea');
-        ta.value = teks;
-        ta.style.cssText = 'position:fixed;left:-9999px;top:0;';
-        document.body.appendChild(ta);
-        ta.focus(); ta.select();
-        try {
-            document.execCommand('copy');
-            gsToast('📋 Teks laporan disalin ke clipboard!');
-        } catch (err2) {
-            await gsAlert('Tidak dapat membagikan laporan. Coba gunakan tombol Share Foto.', '⚠️ Info');
-        }
-        document.body.removeChild(ta);
+        saveLocalDB();
+        queueCloudSync();
+        refresh();
+        if(currentRole === 'owner') updateOwnerDashboard();
+        if(document.getElementById('page-report').classList.contains('active')) hitungLaporanRange();
+        alert('✅ Semua saldo telah direset ke 0');
     }
 }
 
-// ==================== REFRESH ====================
 function refresh() {
     if(!db) return;
     document.getElementById('s-bank').innerText = "Rp " + fmtN(db.bank);
@@ -1396,31 +1317,16 @@ function refresh() {
     document.getElementById('s-tarik').innerText = fmtN(db.tarik);
     document.getElementById('s-aks').innerText = fmtN(db.aks);
     document.getElementById('s-admin').innerText = fmtN(db.admin);
-    localStorage.setItem('alfaza_v14_6', JSON.stringify(mainDB));
+    saveLocalDB();
 }
 
-// ==================== RESET ====================
-async function resetSaldo() {
-    const ok = await gsConfirm('Reset semua saldo ke 0?', '⚠️ Konfirmasi');
-    if(ok) {
-        Object.keys(mainDB).forEach(k => {
-            mainDB[k].bank = 0; mainDB[k].cash = 0;
-            mainDB[k].tarik = 0; mainDB[k].aks = 0; mainDB[k].admin = 0;
-        });
-        localStorage.setItem('alfaza_v14_6', JSON.stringify(mainDB));
-        refresh();
-        await gsAlert('Saldo telah direset ke 0', '✅ Berhasil');
-    }
+async function logout() { if(confirm('Keluar?')) { try { await syncNow(false); } catch(e) {} location.reload(); } }
+function bukaModalSaldoReal() { document.getElementById('modalSaldoReal').style.display = 'flex'; }
+
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
 }
 
-async function logout() {
-    const ok = await gsConfirm('Anda yakin ingin keluar?', '👋 Keluar');
-    if(!ok) return;
-    if(exitAppSafely()) return;
-    location.href = location.href;
-}
 </script>
-
-<!-- Akhir dari file -->
 </body>
 </html>
